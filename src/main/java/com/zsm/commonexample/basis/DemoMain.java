@@ -1,9 +1,4 @@
-package main.java.com.zsm.demo.basis;
-
-import sun.reflect.ReflectionFactory;
-
-import java.lang.reflect.Constructor;
-
+package com.zsm.commonexample.basis;
 
 /**
  * @Author: zengsm
@@ -16,7 +11,7 @@ public class DemoMain
     public static void main(String[] args)
         throws Exception
     {
-        
+
     }
 
     public static void sop(Object obj)
@@ -25,6 +20,5 @@ public class DemoMain
     }
 }
 
-public
 
 

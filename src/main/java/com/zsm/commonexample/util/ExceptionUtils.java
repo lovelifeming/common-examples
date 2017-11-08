@@ -1,4 +1,4 @@
-package main.java.com.zsm.demo.util;
+package com.zsm.commonexample.util;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -10,7 +10,7 @@ import java.io.StringWriter;
  * @Date:Created in 2017/11/8 10:33.
  * @Modified By:
  */
-public class ExceptionUtil
+public class ExceptionUtils
 {
     /**
      * 获取异常Throwable里面的异常信息
@@ -31,6 +31,5 @@ public class ExceptionUtil
         {
             ps.close();
         }
-
     }
 }

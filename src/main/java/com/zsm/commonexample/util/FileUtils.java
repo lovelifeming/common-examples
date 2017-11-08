@@ -1,9 +1,7 @@
-package main.java.com.zsm.demo.util;
+package com.zsm.commonexample.util;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
 
 
 /**
@@ -12,7 +10,7 @@ import java.io.StringWriter;
  * @Date:Created in 2017/11/8 10:23.
  * @Modified By:
  */
-public static  class FileUtil
+public class FileUtils
 {
 
     /**
@@ -32,7 +30,7 @@ public static  class FileUtil
         catch (IOException e)
         {
             e.printStackTrace();
-            System.out.println("FileUtil-->closeStream-->" + e.getStackTrace());
+            System.out.println("FileUtils-->closeStream-->" + e.getStackTrace());
         }
     }
 
