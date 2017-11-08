@@ -4,9 +4,9 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <name>Algorithms</name>
-    <groupId>com.zsm.generalalgorithms</groupId>
-    <artifactId>generalalgorithms</artifactId>
+    <name>Common Examples</name>
+    <groupId>com.zsm.demo</groupId>
+    <artifactId>CommonExamples</artifactId>
     <packaging>jar</packaging>
     <version>1.0-SNAPSHOT</version>
 
