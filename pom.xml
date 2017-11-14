@@ -14,6 +14,9 @@
         <junit.version>4.12</junit.version>
         <maven.plugins.version>2.17</maven.plugins.version>
         <httpclient.version>4.5.3</httpclient.version>
+        <slf4j-api.version>1.8.0-beta0</slf4j-api.version>
+        <servlet-api.version>4.0.0</servlet-api.version>
+        <jstl.version>1.2</jstl.version>
 
         <!--JSONObject-->
         <json-lib.version>2.4</json-lib.version>
@@ -22,6 +25,8 @@
         <commons-beanutils.version>1.8.0</commons-beanutils.version>
         <commons-logging.version>1.1.1</commons-logging.version>
         <ezmorph.version>1.0.6</ezmorph.version>
+        <jackson.version>1.9.13</jackson.version>
+        <jackson-databind.version>2.9.2</jackson-databind.version>
     </properties>
 
     <dependencies>
@@ -61,6 +66,23 @@
             <artifactId>ezmorph</artifactId>
             <version>${ezmorph.version}</version>
         </dependency>
+        <!-- JSON -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson-databind.version}</version>
+        </dependency>
+        <!-- jackson -->
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-core-asl</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-mapper-asl</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
         <!-- apache-common -->
         <dependency>
             <groupId>commons-lang</groupId>
@@ -73,7 +95,25 @@
             <version>${commons-collections.version}</version>
         </dependency>
 
-
+        <!-- 日志处理log -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j-api.version}</version>
+        </dependency>
+        <!-- servlet api -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>${servlet-api.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- jstl -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+            <version>${jstl.version}</version>
+        </dependency>
 
     </dependencies>
 

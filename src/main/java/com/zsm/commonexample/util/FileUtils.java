@@ -14,6 +14,11 @@ public class FileUtils
 {
 
     /**
+     * 获取系统文件分隔符
+     */
+    public static final String FILE_SEPARATOR = System.getProperty("file.separator");
+
+    /**
      * 关闭继承于Closeable接口的流对象
      *
      * @param closeables
@@ -24,7 +29,10 @@ public class FileUtils
         {
             for (Closeable closeable : closeables)
             {
-                closeable.close();
+                if (closeable != null)
+                {
+                    closeable.close();
+                }
             }
         }
         catch (IOException e)
@@ -32,6 +40,28 @@ public class FileUtils
             e.printStackTrace();
             System.out.println("FileUtils-->closeStream-->" + e.getStackTrace());
         }
+    }
+
+    /**
+     * 获取真实路径，用系统分隔符替换
+     *
+     * @param path
+     * @return
+     */
+    public static String getRealFilePathBySystem(String path)
+    {
+        return path.replace("/", FILE_SEPARATOR).replace("\\", FILE_SEPARATOR);
+    }
+
+    /**
+     * 获取HttpURL路径，/ 替换\\
+     *
+     * @param path
+     * @return
+     */
+    public static String getHttpURLPath(String path)
+    {
+        return path.replace("\\", "/");
     }
 
 }

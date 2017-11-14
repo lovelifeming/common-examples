@@ -14,10 +14,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLDecoder;
+import java.net.*;
 
 
 /**
@@ -26,16 +23,16 @@ import java.net.URLDecoder;
  * @Date:Created in 2017/11/8 10:01.
  * @Modified By:
  */
-public class HttpPostRequest
+public class HttpPostGetRequest
 {
     /**
      * 使用URL类connection
      *
      * @param url
-     * @param data
+     * @param params
      * @return
      */
-    public static String sendHttpPostURL(String url, String data)
+    public static String sendHttpPostURL(String url, String params)
     {
         OutputStreamWriter out = null;
         BufferedReader reader = null;
@@ -59,7 +56,7 @@ public class HttpPostRequest
 
             //3.发送POST请求
             out = new OutputStreamWriter(conn.getOutputStream());
-            out.write(data);
+            out.write(params);
             out.flush();
 
             //4.读取响应信息
@@ -81,17 +78,18 @@ public class HttpPostRequest
         catch (MalformedURLException e)
         {
             e.printStackTrace();
-            System.out.println("HttpPostRequest-->sendHttpPostURL-->MalformedURLException-->" + e.getMessage());
+            System.out.println("HttpPostGetRequest-->sendHttpPostURL-->MalformedURLException-->" + e.getMessage());
         }
         catch (UnsupportedEncodingException e)
         {
             e.printStackTrace();
-            System.out.println("HttpPostRequest-->sendHttpPostURL-->UnsupportedEncodingException-->" + e.getMessage());
+            System.out.println(
+                "HttpPostGetRequest-->sendHttpPostURL-->UnsupportedEncodingException-->" + e.getMessage());
         }
         catch (IOException e)
         {
             e.printStackTrace();
-            System.out.println("HttpPostRequest-->sendHttpPostURL-->IOException-->" + e.getMessage());
+            System.out.println("HttpPostGetRequest-->sendHttpPostURL-->IOException-->" + e.getMessage());
         }
         finally
         {
@@ -105,10 +103,10 @@ public class HttpPostRequest
      * 使用CloseableHttpClient发送POST请求
      *
      * @param url
-     * @param data
+     * @param params
      * @return
      */
-    public static String sendHttpPostClient(String url, String data, String encoding)
+    public static String sendHttpPostClient(String url, String params, String encoding)
         throws IOException
     {
         String result = null;
@@ -118,7 +116,7 @@ public class HttpPostRequest
         HttpPost httpPost = new HttpPost(url);
 
         //设置参数到请求对象中
-        httpPost.setEntity(new StringEntity(data, encoding));
+        httpPost.setEntity(new StringEntity(params, encoding));
         //设置头信息,指定报文头【Content-type】、【User-Agent】
         httpPost.setHeader("Content-type", "application/json");
 
@@ -141,14 +139,55 @@ public class HttpPostRequest
     }
 
     /**
+     * 使用CloseableHttpClient发送Get请求
+     *
+     * @param url
+     * @param params
+     * @return
+     */
+    public static String sendHttpGetClient(String url, String params, String encoding)
+        throws IOException
+    {
+        String result = null;
+        //创建httpclient对象
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        if (params != null)
+        {
+            url = url + "?" + URLEncoder.encode(params, encoding);
+        }
+        //创建post方式请求对象
+        HttpGet httpGet = new HttpGet(url);
+
+        //设置头信息,指定报文头【Content-type】、【User-Agent】
+        httpGet.setHeader("Content-type", "application/json");
+
+        //执行请求操作，得到结果
+        CloseableHttpResponse response = httpClient.execute(httpGet);
+
+        //获取返回数据
+        HttpEntity entity = response.getEntity();
+        if (entity != null)
+        {
+            //按指定编码转换结果实体为String类型
+            result = EntityUtils.toString(entity, encoding);
+        }
+        EntityUtils.consume(entity);
+
+        //释放链接
+        response.close();
+
+        return result;
+    }
+
+    /**
      * 使用DefaultHttpClient发送POST请求
      *
      * @param url
-     * @param data
+     * @param params
      * @param needResponse
      * @return
      */
-    public static String sendHttpPostDefaultClient(String url, String data, boolean needResponse)
+    public static String sendHttpPostDefaultClient(String url, String params, boolean needResponse)
     {
         String result = null;
         //创建DefaultHttpClient对象
@@ -158,7 +197,7 @@ public class HttpPostRequest
         HttpPost httpPost = new HttpPost(url);
 
         //设置请求头信息
-        StringEntity entity = new StringEntity(data, "UTF-8");
+        StringEntity entity = new StringEntity(params, "UTF-8");
         entity.setContentEncoding("UTF-8");
         entity.setContentType("application/json");
 
@@ -185,7 +224,7 @@ public class HttpPostRequest
         catch (IOException e)
         {
             e.printStackTrace();
-            System.out.println("HttpPostRequest-->sendHttpPostDefaultClient-->IOException-->" + e.getMessage());
+            System.out.println("HttpPostGetRequest-->sendHttpPostDefaultClient-->IOException-->" + e.getMessage());
         }
 
         //获取返回数据
@@ -193,13 +232,26 @@ public class HttpPostRequest
         return result;
     }
 
-    public static String sendHttpGetDefaultClient(String rul)
+    /**
+     * 使用DefaultHttpClient发送GET请求
+     *
+     * @param rul
+     * @param params
+     * @return
+     */
+    public static String sendHttpGetDefaultClient(String url, String params, String encoding)
+        throws MalformedURLException, UnsupportedEncodingException
     {
         String result = null;
         //创建DefaultHttpClient对象
         DefaultHttpClient httpClient = new DefaultHttpClient();
         //创建GET方式请求对象
-        HttpGet httpGet = new HttpGet();
+        if (null != params)
+        {
+            url = url + "?" + URLEncoder.encode(params, encoding);
+        }
+        HttpGet httpGet = new HttpGet(url);
+
         //执行请求操作，得到请求结果
         try
         {
@@ -213,8 +265,9 @@ public class HttpPostRequest
         catch (IOException e)
         {
             e.printStackTrace();
-            System.out.println("HttpPostRequest-->sendHttpGetDefaultClient-->IOException-->" + e.getMessage());
+            System.out.println("HttpPostGetRequest-->sendHttpGetDefaultClient-->IOException-->" + e.getMessage());
         }
         return result;
     }
+
 }
