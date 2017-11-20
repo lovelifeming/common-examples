@@ -1,6 +1,6 @@
-package com.zsm.commonexample.FileOperator;
+package com.zsm.commonexample.fileoperator;
 
-import com.zsm.commonexample.util.FileUtils;
+import com.zsm.commonexample.util.CommonUtils;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -55,7 +55,7 @@ public class PropertiesFile
         }
         finally
         {
-            FileUtils.closeStream(fis);
+            CommonUtils.closeStream(fis);
         }
         return value;
     }
@@ -95,7 +95,7 @@ public class PropertiesFile
         }
         finally
         {
-            FileUtils.closeStream(fis);
+            CommonUtils.closeStream(fis);
         }
         return flag;
     }

@@ -19,30 +19,6 @@ public class FileUtils
     public static final String FILE_SEPARATOR = System.getProperty("file.separator");
 
     /**
-     * 关闭继承于Closeable接口的流对象
-     *
-     * @param closeables
-     */
-    public static void closeStream(Closeable... closeables)
-    {
-        try
-        {
-            for (Closeable closeable : closeables)
-            {
-                if (closeable != null)
-                {
-                    closeable.close();
-                }
-            }
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-            System.out.println("FileUtils-->closeStream-->" + e.getStackTrace());
-        }
-    }
-
-    /**
      * 获取真实路径，用系统分隔符替换
      *
      * @param path
