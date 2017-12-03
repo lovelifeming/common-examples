@@ -5,6 +5,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.type.CollectionType;
 import org.codehaus.jackson.map.type.MapType;
 import org.codehaus.jackson.map.type.TypeFactory;
+import org.codehaus.jackson.type.JavaType;
 
 import java.io.IOException;
 import java.util.*;
@@ -20,6 +21,8 @@ import java.util.*;
  */
 public class JsonUtils
 {
+    public static ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
     /**
      * 将对象转化成JSON类型的字符串
      *
@@ -50,10 +53,9 @@ public class JsonUtils
      */
     public static String objectToJson(Object object)
     {
-        ObjectMapper objectMapper = new ObjectMapper();
         try
         {
-            return objectMapper.writeValueAsString(object);
+            return OBJECT_MAPPER.writeValueAsString(object);
         }
         catch (IOException e)
         {
@@ -72,11 +74,9 @@ public class JsonUtils
      */
     public static <T> T jsonToObject(String json, Class<T> valueType)
     {
-        ObjectMapper objectMapper = new ObjectMapper();
-
         try
         {
-            return objectMapper.readValue(json, valueType);
+            return OBJECT_MAPPER.readValue(json, valueType);
         }
         catch (IOException e)
         {
@@ -89,23 +89,46 @@ public class JsonUtils
      * 将对象转化成指定对象集合
      *
      * @param json
-     * @param elementClass
+     * @param typeClass
      * @param <T>
      * @return
      */
-    public static <T> List<T> jsonToList(String json, Class<?> elementClass)
+    public static <T> List<T> jsonToListByCollectionType(String json, Class<?> typeClass)
     {
-        ObjectMapper objectMapper = new ObjectMapper();
-        CollectionType type = TypeFactory.defaultInstance().constructCollectionType(ArrayList.class, elementClass);
-        List<T> list = null;
+        CollectionType type = TypeFactory.defaultInstance().constructCollectionType(ArrayList.class, typeClass);
+        List<T> list;
         try
         {
-            list = objectMapper.readValue(json, type);
+            list = OBJECT_MAPPER.readValue(json, type);
         }
         catch (IOException e)
         {
             e.printStackTrace();
             throw new RuntimeException("json数据转化为对象失败，可能是对象类型不匹配");
+        }
+        return list;
+    }
+
+    /**
+     * 将json数据转换成pojo对象list
+     * <p>Title: jsonToList</p>
+     * <p>Description: </p>
+     *
+     * @param jsonData
+     * @param beanType
+     * @return
+     */
+    public static <T> List<T> jsonToListByJavaType(String jsonData, Class<T> beanType)
+    {
+        JavaType javaType = OBJECT_MAPPER.getTypeFactory().constructParametricType(List.class, beanType);
+        try
+        {
+            List<T> list = OBJECT_MAPPER.readValue(jsonData, javaType);
+            return list;
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
         }
         return null;
     }

@@ -1,6 +1,6 @@
 package com.zsm.commonexample.httprequestutil;
 
-import com.zsm.commonexample.util.FileUtils;
+import com.zsm.commonexample.util.CommonUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -39,39 +39,42 @@ public class HttpPostGetRequest
         String response = null;
         try
         {
-            //1.创建连接
+            //1.创建URL对象
             URL httpUrl = new URL(url);
-            //2.建立连接
+            //2.调用URL对象的openConnection()来获取HttpURLConnection对象实例
             HttpURLConnection conn = (HttpURLConnection)httpUrl.openConnection();
-            //设置请求头信息
+            //3.设置请求头信息，请求方式
             conn.setRequestMethod("POST");
             //Content-Type  application/x-www-form-urlencoded   application/json
             conn.setRequestProperty("Content-Type", "application/json");
             conn.setRequestProperty("connection", "keep-alive");
+            //不能缓存
             conn.setUseCaches(false);
             conn.setInstanceFollowRedirects(true);
+            //设置连接超时为5秒
+            conn.setConnectTimeout(5000);
+            //允许输入输出
             conn.setDoInput(true);
             conn.setDoOutput(true);
+            //4.发送POST请求
             conn.connect();
-
-            //3.发送POST请求
+            //输出流写入要发送的数据
             out = new OutputStreamWriter(conn.getOutputStream());
             out.write(params);
             out.flush();
 
-            //4.读取响应信息
+            //5.读取响应信息
             reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             String lines;
             StringBuilder sb = new StringBuilder();
             while ((lines = reader.readLine()) != null)
             {
                 lines = new String(lines.getBytes(), "utf-8");
-
                 sb.append(lines);
             }
             response = sb.toString();
 
-            //5.断开连接
+            //6.断开连接
             reader.close();
             conn.disconnect();
         }
@@ -93,10 +96,45 @@ public class HttpPostGetRequest
         }
         finally
         {
-            //6.使用finally块来关闭输出流、输入流
-            FileUtils.closeStream(out, reader);
+            //7.使用finally块来关闭输出流、输入流
+            CommonUtils.closeStream(out, reader);
         }
         return response;
+    }
+
+    /**
+     * 使用URL类connection
+     *
+     * @param url
+     * @param params
+     * @return
+     * @throws IOException
+     */
+    public static String sendHttpGetURL(String url, String params) throws IOException
+    {
+        StringBuilder sb = new StringBuilder();
+        //1.创建URL对象，url是服务器API
+        URL url1 = new URL(url);
+        //2.调用URL对象的openConnection()来获取HttpURLConnection对象实例
+        HttpURLConnection conn = (HttpURLConnection)url1.openConnection();
+        //3.设置请求方法为GET
+        conn.setRequestMethod("GET");
+        //4.设置连接超时为5秒
+        conn.setConnectTimeout(5000);
+        //5.服务器返回响应，先对响应码判断
+        if (conn.getResponseCode() == 200)
+        {
+            InputStream in = conn.getInputStream();
+            byte[] bt = new byte[1024];
+            int len;
+            while ((len = in.read(bt)) != -1)
+            {
+                String temp = new String(bt, 0, len, "UTF-8");
+                sb.append(temp);
+            }
+            in.close();
+        }
+        return sb.toString();
     }
 
     /**
@@ -106,8 +144,7 @@ public class HttpPostGetRequest
      * @param params
      * @return
      */
-    public static String sendHttpPostClient(String url, String params, String encoding)
-        throws IOException
+    public static String sendHttpPostClient(String url, String params, String encoding) throws IOException
     {
         String result = null;
         //创建httpclient对象
@@ -145,8 +182,7 @@ public class HttpPostGetRequest
      * @param params
      * @return
      */
-    public static String sendHttpGetClient(String url, String params, String encoding)
-        throws IOException
+    public static String sendHttpGetClient(String url, String params, String encoding) throws IOException
     {
         String result = null;
         //创建httpclient对象
@@ -172,10 +208,9 @@ public class HttpPostGetRequest
             result = EntityUtils.toString(entity, encoding);
         }
         EntityUtils.consume(entity);
-
         //释放链接
         response.close();
-
+        httpClient.close();
         return result;
     }
 
