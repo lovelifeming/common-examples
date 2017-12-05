@@ -110,7 +110,8 @@ public class HttpPostGetRequest
      * @return
      * @throws IOException
      */
-    public static String sendHttpGetURL(String url, String params) throws IOException
+    public static String sendHttpGetURL(String url, String params)
+        throws IOException
     {
         StringBuilder sb = new StringBuilder();
         //1.创建URL对象，url是服务器API
@@ -142,9 +143,11 @@ public class HttpPostGetRequest
      *
      * @param url
      * @param params
+     * @param encoding "UTF-8"
      * @return
      */
-    public static String sendHttpPostClient(String url, String params, String encoding) throws IOException
+    public static String sendHttpPostClient(String url, String params, String encoding)
+        throws IOException
     {
         String result = null;
         //创建httpclient对象
@@ -180,9 +183,11 @@ public class HttpPostGetRequest
      *
      * @param url
      * @param params
+     * @param encoding "UTF-8"
      * @return
      */
-    public static String sendHttpGetClient(String url, String params, String encoding) throws IOException
+    public static String sendHttpGetClient(String url, String params, String encoding)
+        throws IOException
     {
         String result = null;
         //创建httpclient对象
@@ -219,7 +224,7 @@ public class HttpPostGetRequest
      *
      * @param url
      * @param params
-     * @param needResponse
+     * @param needResponse 是否需要响应结果,默认是需要true，false为不需要响应结果
      * @return
      */
     public static String sendHttpPostDefaultClient(String url, String params, boolean needResponse)
@@ -270,8 +275,9 @@ public class HttpPostGetRequest
     /**
      * 使用DefaultHttpClient发送GET请求
      *
-     * @param rul
+     * @param url
      * @param params
+     * @param encoding "UTF-8"
      * @return
      */
     public static String sendHttpGetDefaultClient(String url, String params, String encoding)

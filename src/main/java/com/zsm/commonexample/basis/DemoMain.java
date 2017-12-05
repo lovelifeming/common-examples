@@ -1,16 +1,10 @@
 package com.zsm.commonexample.basis;
 
-import com.zsm.commonexample.httprequestutil.HttpPostGetRequest;
-import com.zsm.commonexample.util.URLOperator;
-import org.apache.commons.lang.StringUtils;
-import org.apache.http.client.utils.URLEncodedUtils;
+import com.zsm.commonexample.util.ReadKeyboard;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.Map;
+import javax.xml.stream.events.DTD;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 
 /**
@@ -39,13 +33,13 @@ public class DemoMain
 //
 //        String da = URLOperator.writeMapAsUrlParams(map);
 //
-        String t = URLEncoder.encode(sourceUrl, "UTF-8");
-        sop(t);
-        String un = URLDecoder.decode(t);
-        sop(un);
-
-        String result = HttpPostGetRequest.sendHttpGetClient(sourceUrl, null, "UTF-8");
-        sop(result);
+//        String t = URLEncoder.encode(sourceUrl, "UTF-8");
+//        sop(t);
+//        String un = URLDecoder.decode(t);
+//        sop(un);
+//
+//        String result = HttpPostGetRequest.sendHttpGetClient(sourceUrl, null, "UTF-8");
+//        sop(result);
 //
 //        String host = URLOperator.truncateUrlHost(sourceUrl);
 //        String params = URLOperator.truncateUrlParams(sourceUrl);
@@ -54,6 +48,10 @@ public class DemoMain
 //
 //        Map<String, Object> str = URLOperator.writeUrlParamsAsMap(sourceUrl);
 //        sop(str);
+
+
+
+
 
     }
 

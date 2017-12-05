@@ -2,6 +2,7 @@ package com.zsm.commonexample.util;
 
 import org.apache.commons.lang.StringUtils;
 
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,6 +15,52 @@ import java.util.Map;
  */
 public class URLOperator
 {
+    /**
+     * 获取系统文件分隔符
+     */
+    public static final String FILE_SEPARATOR = System.getProperty("file.separator");
+
+    /**
+     * 获取真实路径，用系统分隔符替换
+     *
+     * @param path
+     * @return
+     */
+    public static String getRealFilePath(String path)
+    {
+        return path.replace("/", FILE_SEPARATOR).replace("\\", FILE_SEPARATOR);
+    }
+
+    /**
+     * 获取HttpURL路径，/替换\\
+     *
+     * @param path
+     * @return
+     */
+    public static String getHttpURLPath(String path)
+    {
+        return path.replace("\\", "/");
+    }
+
+    /**
+     * 获取本类项目相对路径
+     *
+     * @return
+     */
+    public static String getPropertiesPath(String filePath)
+    {
+        String path = null;
+        try
+        {
+            path = new CommonUtils().getClass().getResource("/").toURI().getPath() + filePath;
+        }
+        catch (URISyntaxException e)
+        {
+            e.printStackTrace();
+        }
+        return getRealFilePath(path);
+    }
+
     /**
      * 将Map转换成url params形式，name=text&psw=123456
      *
