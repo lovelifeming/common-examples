@@ -1,5 +1,8 @@
 package com.zsm.commonexample.util;
 
+import java.text.DecimalFormat;
+
+
 /**
  * @Author: zsm.
  * @Description:
@@ -63,5 +66,17 @@ public class NumberUtils
             sb.append(result[i]);
         }
         return sb.toString();
+    }
+
+    /**
+     * 金额格式转换
+     *
+     * @param d
+     * @return
+     */
+    public String formatDouble(double d)
+    {
+        DecimalFormat fmat = new DecimalFormat("\u00A4##.0");
+        return fmat.format(d);
     }
 }
