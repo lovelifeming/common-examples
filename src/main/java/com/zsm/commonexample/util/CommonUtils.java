@@ -19,20 +19,20 @@ public class CommonUtils
      */
     public static void closeStream(Closeable... closeables)
     {
-        try
+        for (Closeable closeable : closeables)
         {
-            for (Closeable closeable : closeables)
+            try
             {
                 if (closeable != null)
                 {
                     closeable.close();
                 }
             }
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-            System.out.println("FileUtils-->closeStream-->" + e.getStackTrace());
+            catch (IOException e)
+            {
+                e.printStackTrace();
+                System.out.println("FileUtils-->closeStream-->" + e.getStackTrace());
+            }
         }
     }
 }

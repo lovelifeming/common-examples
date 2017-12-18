@@ -1,4 +1,4 @@
-package com.zsm.commonexample.util;
+package com.zsm.commonexample.dateoperator;
 
 import org.junit.Test;
 
@@ -6,13 +6,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import static org.junit.Assert.*;
-
 
 /**
  * @Author: zengsm.
  * @Description:
- * @Date:Created in 2017/12/4 14:42.
+ * @Date:Created in 2017/12/18 10:38.
  * @Modified By:
  */
 public class TimeUtilsTest
