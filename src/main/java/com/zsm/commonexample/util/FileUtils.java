@@ -1,7 +1,11 @@
 package com.zsm.commonexample.util;
 
 import java.io.Closeable;
+import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 /**
@@ -38,6 +42,27 @@ public class FileUtils
     public static String getHttpURLPath(String path)
     {
         return path.replace("\\", "/");
+    }
+
+    /**
+     * 根据日期创建文件夹
+     *
+     * @param filePath 文件夹路径
+     * @return 根据日期创建的文件夹路径
+     */
+    public static String makeFilePathByDate(String filePath)
+    {
+        Date date = new Date();
+        DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM);
+        String s = df.format(date);
+        String path = filePath + FILE_SEPARATOR + s;
+        File file = new File(path);
+        if (!file.exists())
+        {
+            //创建多级目录，mkdir只创建一级目录
+            file.mkdirs();
+        }
+        return path;
     }
 
 }

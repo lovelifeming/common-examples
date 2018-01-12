@@ -1,5 +1,6 @@
 package com.zsm.commonexample.util;
 
+import net.sf.json.JSONObject;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +12,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 
@@ -95,5 +97,24 @@ public class ControllerUtils
             result.put(key, value);
         }
         return result;
+    }
+
+    /**
+     * 获取请求Request里面的参数,转换为JSONObject
+     *
+     * @param request
+     * @return
+     */
+    public static JSONObject readValueToJSONObject(HttpServletRequest request)
+    {
+        JSONObject json = new JSONObject();
+        Map<String, String[]> map = request.getParameterMap();
+        Iterator<Map.Entry<String, String[]>> iterator = map.entrySet().iterator();
+        while (iterator.hasNext())
+        {
+            Map.Entry<String, String[]> m = iterator.next();
+            json.put(m.getKey(), m.getValue());
+        }
+        return json;
     }
 }

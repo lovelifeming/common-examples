@@ -67,7 +67,7 @@ public class URLOperator
      * @param map
      * @return
      */
-    public static String writeMapAsUrlParams(Map<String, Object> map)
+    public static String convertMapToUrlParams(Map<String, Object> map)
     {
         if (null == map)
         {
@@ -96,37 +96,46 @@ public class URLOperator
      * @param url
      * @return
      */
-    public static Map<String, Object> writeUrlParamsAsMap(String url)
+    public static Map<String, Object> convertUrlParamsToMap(String url)
     {
         if (StringUtils.isBlank(url))
         {
             return null;
         }
-
-        Map<String, Object> result = new HashMap<String, Object>();
         String params = truncateUrlParams(url);
-        if (null == params)
+        if (null == params || "".equals(params))
         {
-            return result;
+            return new HashMap<>();
         }
+        return convertURLParamToMap(params);
+    }
+
+    /**
+     * 将url参数部分字符串转换为Map集合
+     *
+     * @param params
+     * @return
+     */
+    public static Map<String, Object> convertURLParamToMap(String params)
+    {
+        Map<String, Object> result = new HashMap<String, Object>();
         String[] arrSplit = params.split("&");
         for (String s : arrSplit)
         {
             String[] temp = s.split("[=]");
             if (temp.length >= 2 && !"".equals(temp[0]))
             {
-                result.put(temp[0], StringArrayUtils.toStringArrayAsString(temp, 1, temp.length - 1));
+                result.put(temp[0], StringArrayUtils.convertStringArrayToString(temp, 1, temp.length - 1));
             }
         }
-
         return result;
     }
 
     /**
-     * 截取url主机连接路径
+     * 截取url主机连接路径，http://localhost:8080/get/finduser5?username="admin"&password="123456"
      *
      * @param url
-     * @return
+     * @return http://localhost:8080/get/finduser5
      */
     public static String truncateUrlHost(String url)
     {
@@ -134,10 +143,10 @@ public class URLOperator
     }
 
     /**
-     * 截取url参数部分
+     * 截取url参数部分，http://localhost:8080/get/finduser5?username="admin"&password="123456"
      *
      * @param url
-     * @return
+     * @return username="admin"&password="123456"
      */
     public static String truncateUrlParams(String url)
     {
@@ -155,7 +164,6 @@ public class URLOperator
         String[] split = url.split("[?]");
         if (url.length() > 1 && split.length > 1)
         {
-
             if (index < 1)
             {
                 result = split[index];
@@ -167,7 +175,6 @@ public class URLOperator
                     result += split[i];
                 }
             }
-
         }
         return result;
     }

@@ -17,7 +17,7 @@ public class StringArrayUtils
      * @param end   数组index结束位置，0~value.length-1
      * @return
      */
-    public static String toStringArrayAsString(String[] value, int start, int end)
+    public static String convertStringArrayToString(String[] value, int start, int end)
     {
         boolean flag = start > 0 && start <= end && end <= value.length - 1;
         if (!flag)
