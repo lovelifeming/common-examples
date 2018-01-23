@@ -1,8 +1,15 @@
 package com.zsm.commonexample.basis;
 
+import com.zsm.commonexample.serializable.SerializableUtils;
 import com.zsm.commonexample.util.ReadKeyboard;
+import org.ietf.jgss.ChannelBinding;
+import sun.nio.ch.ChannelInputStream;
 
 import javax.xml.stream.events.DTD;
+import java.io.*;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -32,26 +39,18 @@ public class DemoMain
 //        map.put("state", "1");
 //
 //        String da = URLOperator.writeMapAsUrlParams(map);
-//
 //        String t = URLEncoder.encode(sourceUrl, "UTF-8");
 //        sop(t);
 //        String un = URLDecoder.decode(t);
 //        sop(un);
-//
 //        String result = HttpPostGetRequest.sendHttpGetClient(sourceUrl, null, "UTF-8");
 //        sop(result);
-//
 //        String host = URLOperator.truncateUrlHost(sourceUrl);
 //        String params = URLOperator.truncateUrlParams(sourceUrl);
 //        sop(host);
 //        sop(params);
-//
 //        Map<String, Object> str = URLOperator.writeUrlParamsAsMap(sourceUrl);
 //        sop(str);
-
-
-
-
 
     }
 
@@ -59,8 +58,44 @@ public class DemoMain
     {
         System.out.println(obj);
     }
-
 }
+
+
+class User implements Serializable
+{
+    private static final long serialVersionUID = 23114L;
+
+    private String name;
+
+    private int age;
+
+    public String getName()
+    {
+        return name;
+    }
+
+    public void setName(String name)
+    {
+        this.name = name;
+    }
+
+    public int getAge()
+    {
+        return age;
+    }
+
+    public void setAge(int age)
+    {
+        this.age = age;
+    }
+
+    @Override
+    public String toString()
+    {
+        return name + age;
+    }
+}
+
 
 
 
