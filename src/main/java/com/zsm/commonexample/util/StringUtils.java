@@ -9,6 +9,24 @@ package com.zsm.commonexample.util;
 public class StringUtils
 {
     /**
+     * 判断字符串是否为null，如果为null返回 "" 空字符串，否则返回原字符串
+     *
+     * @param str
+     * @return
+     */
+    public static String replaceNullString(String str)
+    {
+        if (str == null)
+        {
+            return "";
+        }
+        else
+        {
+            return str;
+        }
+    }
+
+    /**
      * 查找字符串里面包含的最大子字符串
      */
     public static String getMaxSubString(String str, String str1)

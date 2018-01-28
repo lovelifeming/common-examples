@@ -1,5 +1,7 @@
 package com.zsm.commonexample.fileoperator;
 
+import com.zsm.commonexample.util.CommonUtils;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -14,6 +16,7 @@ import java.util.Iterator;
  */
 public class FileOperatorUtils
 {
+
     /**
      * 拷贝文件
      *
@@ -43,28 +46,7 @@ public class FileOperatorUtils
         }
         finally
         {
-            try
-            {
-                if (fr != null)
-                {
-                    fr.close();
-                }
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-            try
-            {
-                if (fw != null)
-                {
-                    fw.close();
-                }
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
+            CommonUtils.closeStream(fr, fw);
         }
     }
 
@@ -100,28 +82,7 @@ public class FileOperatorUtils
         }
         finally
         {
-            try
-            {
-                if (bufr != null)
-                {
-                    bufr.close();
-                }
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-            try
-            {
-                if (bufw != null)
-                {
-                    bufw.close();
-                }
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
+            CommonUtils.closeStream(bufr, bufw);
         }
     }
 
@@ -156,28 +117,7 @@ public class FileOperatorUtils
         }
         finally
         {
-            try
-            {
-                if (bfis != null)
-                {
-                    bfis.close();
-                }
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-            try
-            {
-                if (bfos != null)
-                {
-                    bfos.close();
-                }
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
+            CommonUtils.closeStream(bfis, bfos);
         }
     }
 
