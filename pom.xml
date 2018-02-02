@@ -1,9 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
     <modelVersion>4.0.0</modelVersion>
-
     <name>Common Examples</name>
     <groupId>com.zsm.demo</groupId>
     <artifactId>CommonExamples</artifactId>
@@ -17,7 +15,6 @@
         <slf4j-api.version>1.8.0-beta0</slf4j-api.version>
         <servlet-api.version>4.0.0</servlet-api.version>
         <jstl.version>1.2</jstl.version>
-
         <!--JSONObject-->
         <json-lib.version>2.4</json-lib.version>
         <commons-lang.version>2.5</commons-lang.version>
@@ -41,7 +38,6 @@
             <artifactId>httpclient</artifactId>
             <version>${httpclient.version}</version>
         </dependency>
-
         <!--JSONObject-->
         <dependency>
             <groupId>net.sf.json-lib</groupId>
@@ -49,13 +45,11 @@
             <version>${json-lib.version}</version>
             <classifier>jdk15</classifier>
         </dependency>
-
         <dependency>
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils</artifactId>
             <version>${commons-beanutils.version}</version>
         </dependency>
-
         <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
@@ -94,7 +88,6 @@
             <artifactId>commons-collections</artifactId>
             <version>${commons-collections.version}</version>
         </dependency>
-
         <!-- 日志处理log -->
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -118,7 +111,7 @@
     </dependencies>
 
     <build>
-        <finalName>generalalgorthms</finalName>
+        <finalName>commonexample</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -136,7 +129,7 @@
                 <configuration>
                     <failsOnError>true</failsOnError>
                     <consoleOutput>true</consoleOutput>
-                    <configLocation>checkstyle.xml</configLocation>
+                    <configLocation>src/main/resource/checkstyle.xml</configLocation>
                 </configuration>
                 <executions>
                     <execution>
@@ -147,7 +140,6 @@
                     </execution>
                 </executions>
             </plugin>
-
             <!--maven 打包可运行jar包-->
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
@@ -159,7 +151,7 @@
                     <archive>
                         <manifest>
                             <!-- main函数类名-->
-                            <mainClass>com.zsm.bigdata.MapReduceApp</mainClass>
+                            <mainClass>com.zsm.commonexample.basis.DemoMain</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

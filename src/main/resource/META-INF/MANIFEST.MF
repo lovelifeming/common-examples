@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Class-Path: lib/slf4j-api-1.8.0-beta0.jar lib/commons-beanutils-1.8.0.
+ jar lib/httpclient-4.5.3.jar lib/jstl-1.2.jar lib/jackson-mapper-asl-
+ 1.9.13.jar lib/jackson-core-2.9.2.jar lib/jackson-annotations-2.9.0.j
+ ar lib/ezmorph-1.0.6.jar lib/json-lib-2.4-jdk15.jar lib/jackson-core-
+ asl-1.9.13.jar lib/commons-logging-1.1.1.jar lib/jackson-databind-2.9
+ .2.jar lib/commons-collections-3.2.1.jar lib/httpcore-4.4.6.jar lib/c
+ ommons-lang-2.5.jar lib/commons-codec-1.9.jar
+Main-Class: com.zsm.commonexample.basis.DemoMain
+

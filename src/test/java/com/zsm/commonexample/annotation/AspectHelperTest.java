@@ -1,6 +1,7 @@
 package com.zsm.commonexample.annotation;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 
@@ -10,6 +11,7 @@ import org.junit.Test;
  * @Date:Created in 2018/2/1 14:46.
  * @Modified By:
  */
+@Ignore
 public class AspectHelperTest
 {
     private static String LOGIN_NAME = "com.zsm.commonexample.annotation.Login";

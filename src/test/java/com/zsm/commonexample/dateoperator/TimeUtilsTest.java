@@ -1,5 +1,6 @@
 package com.zsm.commonexample.dateoperator;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.text.ParseException;
@@ -13,6 +14,7 @@ import java.util.Date;
  * @Date:Created in 2017/12/18 10:38.
  * @Modified By:
  */
+@Ignore
 public class TimeUtilsTest
 {
     private String startTime = "2017-12-4 12:08:6";
