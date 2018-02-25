@@ -151,7 +151,7 @@
                     <archive>
                         <manifest>
                             <!-- main函数类名-->
-                            <mainClass>com.zsm.commonexample.basis.DemoMain</mainClass>
+                            <mainClass>com.zsm.commonexample.main.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
