@@ -1,6 +1,7 @@
 package com.zsm.commonexample.fileoperator;
 
 import com.zsm.commonexample.util.CommonUtils;
+import com.zsm.commonexample.util.FileUtils;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -16,6 +17,56 @@ import java.util.Iterator;
  */
 public class FileOperatorUtils
 {
+
+    /**
+     * 根据文件全路径创建新文件
+     *
+     * @param filePath
+     * @return
+     * @throws IOException
+     */
+    public static boolean createNewFile(String filePath)
+        throws IOException
+    {
+        File file = new File(filePath);
+        if (file.exists())
+        {
+            return false;
+        }
+        else
+        {
+            int index = filePath.lastIndexOf(FileUtils.FILE_SEPARATOR);
+            return createNewFile(filePath.substring(0, index), filePath.substring(index + 1));
+        }
+    }
+
+    /**
+     * 根据文件夹和文件名创建新文件
+     *
+     * @param directory
+     * @param fileName
+     * @return
+     * @throws IOException
+     */
+    public static boolean createNewFile(String directory, String fileName)
+        throws IOException
+    {
+        File dir = new File(directory);
+        if (!dir.exists())
+        {
+            dir.mkdirs();
+        }
+        String filePath = dir.getPath() + FileUtils.FILE_SEPARATOR + fileName;
+        File file = new File(filePath);
+        if (!dir.isDirectory() || file.exists())
+        {
+            return false;
+        }
+        else
+        {
+            return file.createNewFile();
+        }
+    }
 
     /**
      * 拷贝文件
