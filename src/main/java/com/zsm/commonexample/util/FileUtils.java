@@ -1,10 +1,7 @@
 package com.zsm.commonexample.util;
 
-import java.io.Closeable;
 import java.io.File;
-import java.io.IOException;
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 
@@ -18,9 +15,14 @@ public class FileUtils
 {
 
     /**
-     * 获取系统文件分隔符
+     * 获取当前系统文件分隔符
      */
     public static final String FILE_SEPARATOR = System.getProperty("file.separator");
+
+    /**
+     * 获取当前系统文件换行符
+     */
+    public static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
     /**
      * 获取真实路径，用系统分隔符替换

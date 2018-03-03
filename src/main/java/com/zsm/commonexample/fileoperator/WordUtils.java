@@ -1,14 +1,11 @@
 package com.zsm.commonexample.fileoperator;
 
-import javax.swing.text.Document;
-
-
 /**
  * @Author: zengsm.
  * @Description:
- * @Date:Created in 2018/1/28 0:48.
+ * @Date:Created in 2018/2/27 10:16.
  * @Modified By:
  */
-public class XMLUtils
+public class WordUtils
 {
 }
