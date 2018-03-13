@@ -12,7 +12,7 @@ import org.junit.Test;
  * @Modified By:
  */
 @Ignore
-public class AspectHelperTest
+public class AnnotationHelperTest
 {
     private static String LOGIN_NAME = "com.zsm.commonexample.annotation.Login";
 
@@ -20,9 +20,9 @@ public class AspectHelperTest
     public void findClassAnnotation()
         throws Exception
     {
-        LoginCheck lc = (LoginCheck)AspectHelper.findClassAnnotation(LOGIN_NAME, LoginCheck.class);
+        LoginCheck lc = (LoginCheck)AnnotationHelper.findClassAnnotation(LOGIN_NAME, LoginCheck.class);
 
-        LoginCheck loginCheck = AspectHelper.findClassAnnotation(Login.class, LoginCheck.class);
+        LoginCheck loginCheck = AnnotationHelper.findClassAnnotation(Login.class, LoginCheck.class);
         showCheck(lc);
         showCheck(loginCheck);
         Assert.assertEquals(lc.isLogin(), false);
@@ -33,25 +33,23 @@ public class AspectHelperTest
     public void findMethodAnnotation()
         throws Exception
     {
-        LoginCheck[] loginCheck = (LoginCheck[])AspectHelper.findMethodAnnotation(LOGIN_NAME, LoginCheck.class);
+        LoginCheck[] loginCheck = (LoginCheck[])AnnotationHelper.findMethodAnnotation(LOGIN_NAME, LoginCheck.class);
         showCheck(loginCheck);
         Assert.assertEquals(loginCheck[0].userType(), "salaryAdmin");
     }
 
     @Test
     public void findMethodAnnotationByExist()
-        throws Exception
     {
-        LoginCheck[] loginCheck = AspectHelper.findMethodAnnotationByExist(Login.class, LoginCheck.class);
+        LoginCheck[] loginCheck = AnnotationHelper.findMethodAnnotationByExist(Login.class, LoginCheck.class);
         showCheck(loginCheck);
         Assert.assertEquals(loginCheck[0].userType(), "salaryAdmin");
     }
 
     @Test
     public void findMethodAnnotationByInstance()
-        throws Exception
     {
-        LoginCheck[] loginCheck = AspectHelper.findMethodAnnotationByIsInstance(Login.class, LoginCheck.class);
+        LoginCheck[] loginCheck = AnnotationHelper.findMethodAnnotationByIsInstance(Login.class, LoginCheck.class);
         showCheck(loginCheck);
         Assert.assertEquals(loginCheck[1].userType(), "admin");
     }

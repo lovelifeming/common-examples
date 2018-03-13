@@ -13,9 +13,9 @@ import java.util.List;
  * @Date:Created in 2018/1/29 14:23.
  * @Modified By:
  */
-public class AspectHelper
+public class AnnotationHelper
 {
-    private AspectHelper()
+    private AnnotationHelper()
     {
 
     }
@@ -48,7 +48,6 @@ public class AspectHelper
      * @throws ClassNotFoundException
      */
     public static <T, U extends Annotation> U findClassAnnotation(Class<T> type, Class<U> annotationClass)
-        throws ClassNotFoundException
     {
         U annotation = null;
         //判断类上面的注解是否存在
@@ -87,7 +86,6 @@ public class AspectHelper
      * @throws ClassNotFoundException
      */
     public static <T, U extends Annotation> U[] findMethodAnnotationByExist(Class<T> type, Class<U> annotationClass)
-        throws ClassNotFoundException
     {
         //获取类的所有方法
         Method[] method = type.getMethods();
@@ -116,7 +114,6 @@ public class AspectHelper
      */
     public static <T, U extends Annotation> U[] findMethodAnnotationByIsInstance(Class<T> type,
                                                                                  Class<U> annotationClass)
-        throws ClassNotFoundException
     {
         Method[] method = type.getMethods();
         List<U> lists = new ArrayList<>();
