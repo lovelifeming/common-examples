@@ -28,7 +28,7 @@ public class ProxySerializable implements Serializable
         System.out.println(source);
         Person target = SerializableUtils.deserializationToObject(bytes);
         System.out.println(target);
-        System.out.println("equals :"+source.equals(target));
+        System.out.println("equals :" + source.equals(target));
     }
 }
 
@@ -84,6 +84,7 @@ class Person implements Serializable
             this.hobby = person.getHobby();
         }
 
+        //外部类反序列化调用获取外部类实例,而不会调用readObject方法
         private Object readResolve()
         {
             Person person = new Person(name, age, hobby);
@@ -91,19 +92,21 @@ class Person implements Serializable
         }
     }
 
+    //对象序列化写入通过此方法代替了writeObject
     private Object writeReplace()
     {
         //readObject的时候是调用, PersonProxy的readResolve()
         return new PersonProxy(this);
     }
 
-    //此方法不会执行,
+    //对象序列化写入不会通过此方法
     private void writeObject(ObjectOutputStream oos)
         throws IOException
     {
         oos.writeChars(name);
         oos.write(age);
         oos.writeChars(hobby);
+        System.out.println(name + age + hobby);
     }
 
     //防止攻击者伪造数据, 企图违反约束条件 (如: 违反年龄约束)
