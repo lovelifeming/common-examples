@@ -23,13 +23,23 @@ public class SerializableUtils
     public static byte[] objectSerializableToBytes(Object object)
         throws IOException
     {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
-        //read object
-        objectOutputStream.writeObject(object);
-        //get byte array
-        byte[] bytes = byteArrayOutputStream.toByteArray();
-        return bytes;
+        ByteArrayOutputStream byteArrayOutputStream = null;
+        ObjectOutputStream objectOutputStream = null;
+        try
+        {
+            byteArrayOutputStream = new ByteArrayOutputStream();
+            objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
+            //read object
+            objectOutputStream.writeObject(object);
+            //get byte array
+            byte[] bytes = byteArrayOutputStream.toByteArray();
+            return bytes;
+        }
+        finally
+        {
+            byteArrayOutputStream.close();
+            objectOutputStream.close();
+        }
     }
 
     /**
@@ -44,9 +54,18 @@ public class SerializableUtils
     public static <T> T deserializationToObject(byte[] bytes)
         throws IOException, ClassNotFoundException
     {
-        ObjectInputStream objectInputStream = new ObjectInputStream(new ByteArrayInputStream(bytes));
-        Object object = objectInputStream.readObject();
-        return (T)object;
+        ObjectInputStream objectInputStream = null;
+        try
+        {
+            objectInputStream = new ObjectInputStream(new ByteArrayInputStream(bytes));
+            Object object = objectInputStream.readObject();
+            return (T)object;
+        }
+        finally
+        {
+            objectInputStream.close();
+        }
+
     }
 
     /**
@@ -58,11 +77,18 @@ public class SerializableUtils
     public static byte[] charsToBytes(char... chars)
     {
         ByteBuffer byteBuffer = ByteBuffer.allocate(chars.length * 2);
-        for (char ch : chars)
+        try
         {
-            byteBuffer.putChar(ch);
+            for (char ch : chars)
+            {
+                byteBuffer.putChar(ch);
+            }
+            return byteBuffer.array();
         }
-        return byteBuffer.array();
+        finally
+        {
+            byteBuffer.clear();
+        }
     }
 
     /**
@@ -75,15 +101,23 @@ public class SerializableUtils
     {
         ByteBuffer byteBuffer = ByteBuffer.wrap(bytes);
         CharBuffer charBuffer = byteBuffer.asCharBuffer();
-        int length = charBuffer.length();
-        char[] chars = new char[length];
-        int index = 0;
-        while (charBuffer.hasRemaining())
+        try
         {
-            chars[index] = charBuffer.get();
-            index++;
+            int length = charBuffer.length();
+            char[] chars = new char[length];
+            int index = 0;
+            while (charBuffer.hasRemaining())
+            {
+                chars[index] = charBuffer.get();
+                index++;
+            }
+            return chars;
         }
-        return chars;
+        finally
+        {
+            byteBuffer.clear();
+            charBuffer.clear();
+        }
     }
 
 }

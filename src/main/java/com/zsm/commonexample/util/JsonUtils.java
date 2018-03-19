@@ -8,7 +8,10 @@ import org.codehaus.jackson.map.type.TypeFactory;
 import org.codehaus.jackson.type.JavaType;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -22,6 +25,26 @@ import java.util.*;
 public class JsonUtils
 {
     public static ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
+    /**
+     * 检查JSONObject字符串是否可以转换为JSONObject对象
+     *
+     * @param json
+     * @return
+     */
+    public static boolean checkedJson(String json)
+    {
+        try
+        {
+            JSONObject jsonObject = JSONObject.fromObject(json);
+            return true;
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
     /**
      * 将对象转化成JSON类型的字符串
@@ -68,15 +91,15 @@ public class JsonUtils
      * 将String对象转化成 T 对象
      *
      * @param json
-     * @param valueType
+     * @param beanType
      * @param <T>
      * @return
      */
-    public static <T> T jsonToObject(String json, Class<T> valueType)
+    public static <T> T jsonToObject(String json, Class<T> beanType)
     {
         try
         {
-            return OBJECT_MAPPER.readValue(json, valueType);
+            return OBJECT_MAPPER.readValue(json, beanType);
         }
         catch (IOException e)
         {

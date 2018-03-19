@@ -1,5 +1,7 @@
 package com.zsm.commonexample.dateoperator;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -14,6 +16,75 @@ import java.util.List;
  */
 public class DateUtils
 {
+    /**
+     * 初始化时间格式化对象 SimpleDateFormat
+     */
+    private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+    /**
+     * 格式化时间
+     *
+     * @param date 默认格式：yyyy-MM-dd HH:mm:ss
+     * @return
+     */
+    public static String formatString(Date date)
+    {
+        return simpleDateFormat.format(date);
+    }
+
+    /**
+     * 根据时间样式格式化时间
+     *
+     * @param date
+     * @param type yyyy-MM-dd HH:mm:ss
+     * @return
+     */
+    public static String formatString(Date date, String type)
+    {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(type);
+        return simpleDateFormat.format(date);
+    }
+
+    /**
+     * 字符串转换为时间
+     *
+     * @param source 默认格式：yyyy-MM-dd HH:mm:ss
+     * @return
+     * @throws ParseException
+     */
+    public static Date toLongDate(String source)
+        throws ParseException
+    {
+        return simpleDateFormat.parse(source);
+    }
+
+    /**
+     * 字符串转换为时间
+     *
+     * @param source 默认格式：yyyy-MM-dd
+     * @return
+     * @throws ParseException
+     */
+    public static Date toShortDate(String source)
+        throws ParseException
+    {
+        return new SimpleDateFormat("yyyy-MM-dd").parse(source);
+    }
+
+    /**
+     * 字符串根据样式转换为时间
+     *
+     * @param source
+     * @param type   格式：yyyy-MM-dd HH:mm:ss
+     * @return
+     * @throws ParseException
+     */
+    public static Date toDate(String source, String type)
+        throws ParseException
+    {
+        return new SimpleDateFormat(type).parse(source);
+    }
+
     /**
      * 返回给定时间在一个月中的对应日期值
      *
@@ -179,6 +250,11 @@ public class DateUtils
             preHourDateList.add(preHourDate);
         }
         return preHourDateList;
+    }
+
+    public enum CharSet{
+        LONG_DATE,
+        SHORT_DATA,
     }
 
 }
