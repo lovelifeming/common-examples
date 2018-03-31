@@ -6,7 +6,6 @@ import com.aliyun.oss.model.OSSObject;
 import com.aliyun.oss.model.ObjectMetadata;
 import com.aliyun.oss.model.PutObjectResult;
 import com.zsm.commonexample.util.CommonUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ibatis.io.Resources;
@@ -14,6 +13,8 @@ import org.apache.ibatis.io.Resources;
 import java.io.*;
 import java.net.URL;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 
@@ -25,39 +26,42 @@ import java.util.Properties;
  */
 public class AliyunOSSClient
 {
-    private static final Log LOG = LogFactory.getLog(AliyunOSSClient.class);
+    private final Log LOG = LogFactory.getLog(AliyunOSSClient.class);
 
-    private static OSSClient ossClient;
+    private OSSClient ossClient;
 
     // 阿里云API的内或外网域名
-    private static String ENDPOINT;
+    private String ENDPOINT;
 
     // 阿里云API的密钥Access Key ID
-    private static String ACCESS_KEY_ID;
+    private String ACCESS_KEY_ID;
 
     // 阿里云API的密钥Access Key Secret
-    private static String ACCESS_KEY_SECRET;
+    private String ACCESS_KEY_SECRET;
 
     // 阿里云API的bucket名称
-    private static String BACKET_NAME;
+    private String BACKET_NAME;
 
     // 阿里云API的文件夹名称
-    private static String FOLDER;
+    private String FOLDER;
+
+    private static Map<String, String> FILE_TYPE = new HashMap<>();
 
     // 初始化属性
-    static
+    private void init()
     {
         Properties pro = new Properties();
         Reader reader = null;
         try
         {
-            String resource = "oss.properties";
+            String resource = "aliyun_oss.properties";
             reader = Resources.getResourceAsReader(resource);
             pro.load(reader);
         }
-        catch (Exception e)
+        catch (IOException e)
         {
             e.printStackTrace();
+            LOG.info(e.getMessage());
         }
         finally
         {
@@ -71,136 +75,164 @@ public class AliyunOSSClient
     }
 
     /**
-     * 获取阿里云OSS客户端对象
-     *
+     * @param bucketName 存储空间名
+     * @param folder     存储空间名下面的文件夹
+     * @param sourcePath 上传文件全路径
+     * @param targetPath 下载文件存储全路径
      * @return
      */
-    public static OSSClient getOSSClient()
+    public static String ossUploadDown(String bucketName, String folder, String sourcePath, String targetPath)
     {
-        return ossClient = new OSSClient(ENDPOINT, ACCESS_KEY_ID, ACCESS_KEY_SECRET);
+        AliyunOSSClient aliyunOSSClient = new AliyunOSSClient();
+        aliyunOSSClient.createFolder(bucketName, folder);
+        File file = new File(sourcePath);
+        String url = aliyunOSSClient.uploadObject2OSS(file, folder + "/");
+        aliyunOSSClient.downOssFile(targetPath, url);
+        return aliyunOSSClient.getUrl(file.getName());
+    }
+
+    public AliyunOSSClient()
+    {
+        init();
+        ossClient = new OSSClient(ENDPOINT, ACCESS_KEY_ID, ACCESS_KEY_SECRET);
     }
 
     /**
-     * 创建存储空间
+     * 获取OSSClient客户端
      *
-     * @param ossClient  OSS连接
+     * @return
+     */
+    public OSSClient getOSSClient()
+    {
+        return ossClient;
+    }
+
+    /**
+     * 创建Bucket存储空间
+     *
      * @param bucketName 存储空间
      * @return
      */
-    public static String createBucketName(OSSClient ossClient, String bucketName)
+    public String createBucketName(String bucketName)
     {
-        // 存储空间
-        final String bucketNames = bucketName;
         if (!ossClient.doesBucketExist(bucketName))
         {
             // 创建存储空间
             Bucket bucket = ossClient.createBucket(bucketName);
-            LOG.info("创建存储空间成功");
+            LOG.info("创建存储空间成功: " + bucketName);
             return bucket.getName();
         }
-        return bucketNames;
+        return bucketName;
     }
 
     /**
-     * 删除存储空间buckName
+     * 删除Bucket存储空间
      *
-     * @param ossClient  oss对象
-     * @param bucketName 存储空间
+     * @param bucketName
      */
-    public static void deleteBucket(OSSClient ossClient, String bucketName)
+    public void deleteBucket(String bucketName)
     {
         ossClient.deleteBucket(bucketName);
-        LOG.info("删除" + bucketName + "Bucket成功");
+        LOG.info("成功删除Bucket：" + bucketName);
     }
 
     /**
-     * 创建模拟文件夹
+     * 创建存储文件夹
      *
-     * @param ossClient  oss连接
-     * @param bucketName 存储空间
-     * @param folder     文件夹
+     * @param bucketName
+     * @param folder
      * @return
      */
-    public static String createFolder(OSSClient ossClient, String bucketName, String folder)
+    public String createFolder(String bucketName, String folder)
     {
-        // 文件夹名
-        final String keySuffixWithSlash = folder;
         // 判断文件夹是否存在，不存在则创建
-        if (!ossClient.doesObjectExist(bucketName, keySuffixWithSlash))
+        if (!ossClient.doesObjectExist(bucketName, folder))
         {
             // 创建文件夹
-            ossClient.putObject(bucketName, keySuffixWithSlash, new ByteArrayInputStream(new byte[0]));
-            LOG.info("创建文件成功");
+            ossClient.putObject(bucketName, folder, new ByteArrayInputStream(new byte[0]));
+            LOG.info("文件夹创建成功：" + folder);
             // 得到文件夹名
-            OSSObject object = ossClient.getObject(bucketName, keySuffixWithSlash);
-            String fileDir = object.getKey();
-            return fileDir;
+            OSSObject object = ossClient.getObject(bucketName, folder);
+            return object.getKey();
         }
-        return keySuffixWithSlash;
+        return folder;
     }
 
     /**
      * 根据key删除OSS服务器上的文件
      *
-     * @param ossClient  oss连接
      * @param bucketName 存储空间
-     * @param folder     文件夹
-     * @param key        Bucket下的文件全路径
+     * @param folder     文件夹名
+     * @param fileName   Bucket下的文件的路径名+文件名
      */
-    public static void deleteFile(OSSClient ossClient, String bucketName, String folder, String key)
+    public void deleteFile(String bucketName, String folder, String fileName)
     {
-        ossClient.deleteObject(bucketName, folder + key);
-        LOG.info("删除" + bucketName + "下的文件" + folder + key + "成功");
+        ossClient.deleteObject(bucketName, folder + fileName);
+        LOG.info("成功删除：" + bucketName + " " + folder + " " + fileName);
     }
 
     /**
      * 上传图片至OSS
      *
-     * @param file   上传文件
-     * @param folder 文件夹名
-     * @return 返回的唯一MD5数字签名
-     * @throws IOException
+     * @param file   上传文件全路径
+     * @param folder 上传文件存储文件夹
+     * @return 返回OSS内部文件存储路径
      */
-    public static String uploadObject2OSS(File file, String folder)
-        throws IOException
+    public String uploadObject2OSS(File file, String folder)
     {
-        String resultStr = null;
+        String result = "";
         // 以输入流的形式上传文件
-        InputStream is = new FileInputStream(file);
-        // 文件名
-        String fileName = file.getName();
-        // 文件大小
-        Long fileSize = file.length();
-        // 创建上传Object的Metadata
-        ObjectMetadata metadata = new ObjectMetadata();
-        // 上传的文件的长度
-        metadata.setContentLength(is.available());
-        // 指定该Object被下载时的网页的缓存行为
-        metadata.setCacheControl("no-cache");
-        // 指定该Object下设置Header
-        metadata.setHeader("Pragma", "no-cache");
-        // 指定该Object被下载时的内容编码格式
-        metadata.setContentEncoding("utf-8");
-        // 如果没有扩展名则填默认值application/octet-stream
-        metadata.setContentType(getContentType(fileName));
-        // 指定该Object被下载时的名称（指示MINME用户代理如何显示附加的文件，打开或下载，及文件名称）
-        metadata.setContentDisposition("filename/filesize=" + fileName + "/" + fileSize + "Byte.");
-        // 上传文件 (上传文件流的形式)
-        PutObjectResult putResult = ossClient.putObject(BACKET_NAME, FOLDER + folder + fileName, is, metadata);
-        // 解析结果
-        resultStr = putResult.getETag();
-        return resultStr;
+        InputStream inputStream = null;
+        try
+        {
+            inputStream = new FileInputStream(file);
+            // 文件名
+            String fileName = file.getName();
+            // 文件大小
+            Long fileSize = file.length();
+            // 创建上传Object的Metadata
+            ObjectMetadata metadata = new ObjectMetadata();
+            // 上传的文件的长度
+            metadata.setContentLength(inputStream.available());
+            // 指定该Object被下载时的网页的缓存行为
+            metadata.setCacheControl("no-cache");
+            // 指定该Object下设置Header
+            metadata.setHeader("Pragma", "no-cache");
+            // 指定该Object被下载时的内容编码格式
+            metadata.setContentEncoding("utf-8");
+            // 如果没有扩展名则填默认值application/octet-stream
+            metadata.setContentType(getContentType(fileName));
+            // 指定该Object被下载时的名称（指示MINME用户代理如何显示附加的文件，打开或下载，及文件名称）
+            metadata.setContentDisposition("filename/filesize=" + fileName + "/" + fileSize + "Byte.");
+
+            String path = FOLDER + folder + fileName;
+            // 上传文件 (上传文件流的形式)
+            PutObjectResult putResult = ossClient.putObject(BACKET_NAME, path, inputStream, metadata);
+            // 解析结果
+            result = path;
+        }
+        catch (FileNotFoundException e)
+        {
+            e.printStackTrace();
+            LOG.info(e.getMessage());
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            LOG.info(e.getMessage());
+        }
+        return result;
     }
 
     /**
-     * 获得文件获取路径
+     * 根据文件名称获得url链接，浏览器直接查看链接
      *
      * @param fileUrl
      * @return
      */
-    public static String getFileUrl(String fileUrl)
+    public String getImgUrl(String fileUrl)
     {
-        if (!StringUtils.isEmpty(fileUrl))
+        if (!com.aliyun.oss.common.utils.StringUtils.isNullOrEmpty(fileUrl))
         {
             String[] split = fileUrl.split("/");
             return getUrl(FOLDER + split[split.length - 1]);
@@ -209,17 +241,16 @@ public class AliyunOSSClient
     }
 
     /**
-     * 获得url链接
+     * 根据文件名称获得url链接，浏览器直接查看链接
      *
-     * @param key
+     * @param fileName 文件名称
      * @return
      */
-    public static String getUrl(String key)
+    public String getUrl(String fileName)
     {
-        // 设置URL过期时间为10年 3600l* 1000*24*365*10
-        Date expiration = new Date(new Date().getTime() + (3600l * 1000 * 24 * 365 * 10));
-        // 生成URL
-        URL url = ossClient.generatePresignedUrl(BACKET_NAME, key, expiration);
+        // 设置URL过期时间为1年 1000*36000*24*365
+        Date expiration = new Date(new Date().getTime() + (1000 * 36000 * 24 * 365));
+        URL url = ossClient.generatePresignedUrl(BACKET_NAME, fileName, expiration);
         if (url != null)
         {
             return url.toString();
@@ -227,111 +258,88 @@ public class AliyunOSSClient
         return null;
     }
 
-    public static String getUrl2(String fileName, String foder)
-    {
-
-        return FOLDER + foder + fileName;
-    }
-
     /**
      * 通过文件名判断并获取OSS服务文件上传时文件的contentType
      *
      * @param fileName 文件名
-     * @return
+     * @return 文件的contentType
      */
-    public static String getContentType(String fileName)
+    public String getContentType(String fileName)
     {
         // 文件的后缀名
         String fileExtension = fileName.substring(fileName.lastIndexOf("."));
-        if (".pdf".equalsIgnoreCase(fileExtension))
+        if (FILE_TYPE.containsKey(fileExtension))
         {
-            return "image/pdf";
-        }
-        if (".PDF".equalsIgnoreCase(fileExtension))
-        {
-            return "image/pdf";
-        }
-        if (".jpeg".equalsIgnoreCase(fileExtension) || ".jpg".equalsIgnoreCase(fileExtension)
-            || ".png".equalsIgnoreCase(fileExtension))
-        {
-            return "image/jpeg";
-        }
-        if (".html".equalsIgnoreCase(fileExtension))
-        {
-            return "text/html";
-        }
-        if (".txt".equalsIgnoreCase(fileExtension))
-        {
-            return "text/plain";
-        }
-        if (".vsd".equalsIgnoreCase(fileExtension))
-        {
-            return "application/vnd.visio";
-        }
-        if (".ppt".equalsIgnoreCase(fileExtension) || "pptx".equalsIgnoreCase(fileExtension))
-        {
-            return "application/vnd.ms-powerpoint";
-        }
-        if (".doc".equalsIgnoreCase(fileExtension) || "docx".equalsIgnoreCase(fileExtension))
-        {
-            return "application/msword";
-        }
-        if (".xml".equalsIgnoreCase(fileExtension))
-        {
-            return "text/xml";
-        }
-        if (".mp4".equalsIgnoreCase(fileExtension))
-        {
-            return "video/mp4";
+            return FILE_TYPE.get(fileExtension);
         }
         // 默认返回类型
-        return "text/plain";
+        return "image/jpeg";
     }
 
-    public static final InputStream getOSS2InputStream(OSSClient client, String bucketName, String filePath)
+    /**
+     * Oss文件下载
+     *
+     * @param filePath
+     * @param ossPath
+     */
+    public void downOssFile(String filePath, String ossPath)
     {
-        OSSObject ossObj = client.getObject(bucketName, filePath);
+        BufferedOutputStream bos = null;
+        BufferedInputStream bis = null;
+        try
+        {
+            bis = new BufferedInputStream(getOSS2InputStream(BACKET_NAME, ossPath));
+            File file = new File(filePath);
+            if (!file.exists())
+            {
+                file.createNewFile();
+            }
+            bos = new BufferedOutputStream(new FileOutputStream(file));
+            int temp = 0;
+            while ((temp = bis.read()) != -1)
+            {
+                bos.write(temp);
+            }
+            bos.flush();
+            LOG.info("文件获取成功: " + filePath);
+        }
+        catch (FileNotFoundException e)
+        {
+            e.printStackTrace();
+            LOG.info(e.getMessage());
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            LOG.info(e.getMessage());
+        }
+        finally
+        {
+            CommonUtils.closeStream(bis, bos);
+        }
+    }
+
+    public final InputStream getOSS2InputStream(String bucketName, String filePath)
+    {
+        OSSObject ossObj = ossClient.getObject(bucketName, filePath);
         return ossObj.getObjectContent();
     }
 
-    // 测试
-    public static void main(String[] args)
-        throws IOException
+    static
     {
-//		// 初始化OSSClient
-//		AliyunOSSClientUtil.getOSSClient();
-//		// 上传文件 String
-//		String files = "C:/Users/Administrator/Desktop/iot_datacollection.sql";
-//		String foder="Lh456";
-//		//AliyunOSSClientUtil.createFolder(ossClient, "fscstg", foder);
-//		String[] file = files.split(",");
-//		for (String filename : file) {
-//			File file2 = new File(filename);
-//			String md5key = AliyunOSSClientUtil.uploadObject2OSS(file2,foder+"/");
-//			LOG.info("文件MD5数字唯一签名:" + md5key);
-//			String imgUrl = getFileUrl(file2.getTypeName());
-//			LOG.info("上传文件的URL:" + imgUrl);
-//		}
-        //获取文件
-        try
-        {
-            BufferedInputStream bis = new BufferedInputStream(
-                AliyunOSSClient.getOSS2InputStream(AliyunOSSClient.getOSSClient(), BACKET_NAME,
-                    "lims/instrument/ysbg/iot/LH569/201802046-苄基腺嘌呤/201802046-苄基腺嘌呤 2018-02-04 15-04-47/NCP52011318020032.D/0db781b6-372e-0ede-e5ec-c8b9d04790c0.PDF"));
-            String resfile = "C:\\Users\\Administrator\\Desktop\\1123.pdf";
-            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(new File(resfile)));
-            int itemp = 0;
-            while ((itemp = bis.read()) != -1)
-            {
-                bos.write(itemp);
-            }
-            LOG.info("文件获取成功"); //console log :文件获取成功
-            bis.close();
-            bos.close();
-        }
-        catch (Exception e)
-        {
-            LOG.error("从OSS获取文件失败:" + e.getMessage(), e);
-        }
+        FILE_TYPE.put(".bmp", "image/bmp");
+        FILE_TYPE.put(".gif", "image/gif");
+        FILE_TYPE.put(".jpeg", "image/jpeg");
+        FILE_TYPE.put(".jpg", "image/jpeg");
+        FILE_TYPE.put(".png", "image/jpeg");
+        FILE_TYPE.put(".html", "text/html");
+        FILE_TYPE.put(".txt", "text/plain");
+        FILE_TYPE.put(".vsd", "application/vnd.visio");
+        FILE_TYPE.put(".ppt", "application/vnd.ms-powerpoint");
+        FILE_TYPE.put(".pptx", "application/vnd.ms-powerpoint");
+        FILE_TYPE.put(".doc", "application/msword");
+        FILE_TYPE.put(".docx", "application/msword");
+        FILE_TYPE.put(".xml", "text/xml");
+        FILE_TYPE.put(".mp4", "video/mp4");
     }
 }

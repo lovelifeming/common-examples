@@ -147,7 +147,6 @@ public class ZipFileOperator
                     // 没有文件，不需要文件的copy
                     zos.closeEntry();
                 }
-
             }
             else
             {
@@ -164,7 +163,6 @@ public class ZipFileOperator
                     {
                         compress(file, zos, file.getName(), keepDirStructure);
                     }
-
                 }
             }
         }
@@ -305,7 +303,6 @@ public class ZipFileOperator
      * @return
      */
     public static boolean uncompressZipFiles(String sourceFilePath, String targetFileDirectory)
-
     {
         File destDir = new File(targetFileDirectory);
         if (!destDir.exists())
