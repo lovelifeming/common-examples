@@ -184,6 +184,13 @@
             <artifactId>spring-aop</artifactId>
             <version>5.0.1.RELEASE</version>
         </dependency>
+        <!--mysql bin-log日志解析-->
+        <dependency>
+            <groupId>com.github.shyiko</groupId>
+            <artifactId>mysql-binlog-connector-java</artifactId>
+            <version>0.13.0</version>
+        </dependency>
+
 
     </dependencies>
 
