@@ -190,6 +190,12 @@
             <artifactId>mysql-binlog-connector-java</artifactId>
             <version>0.13.0</version>
         </dependency>
+        <!-- dom4j 解析XML  -->
+        <dependency>
+            <groupId>dom4j</groupId>
+            <artifactId>dom4j</artifactId>
+            <version>1.6.1</version>
+        </dependency>
 
 
     </dependencies>

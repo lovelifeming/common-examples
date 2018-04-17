@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+    <desc>1</desc>
+    <depict>ServerHost</depict>
+    <serverhost>
+        <hostname>master</hostname>
+        <ip>192.168.1.100</ip>
+        <port>8080</port>
+        <user>root</user>
+        <password>root</password>
+    </serverhost>
+    <serverhost>
+        <hostname>slave1</hostname>
+        <ip>192.168.1.101</ip>
+        <port>80</port>
+        <user>admin</user>
+        <password>admin</password>
+    </serverhost>
+    <serverhost>
+        <hostname>slave2</hostname>
+        <ip>192.168.1.102</ip>
+        <port>8086</port>
+        <user>admin</user>
+        <password>123456</password>
+    </serverhost>
+</root>

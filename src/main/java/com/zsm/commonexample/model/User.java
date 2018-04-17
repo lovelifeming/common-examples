@@ -17,6 +17,10 @@ public class User implements Serializable
 
     private int age;
 
+    private String address;
+
+    private String telephone;
+
     public String getName()
     {
         return name;
@@ -37,9 +41,29 @@ public class User implements Serializable
         this.age = age;
     }
 
+    public String getAddress()
+    {
+        return address;
+    }
+
+    public void setAddress(String address)
+    {
+        this.address = address;
+    }
+
+    public String getTelephone()
+    {
+        return telephone;
+    }
+
+    public void setTelephone(String telephone)
+    {
+        this.telephone = telephone;
+    }
+
     @Override
     public String toString()
     {
-        return name + age;
+        return name + age + address + telephone;
     }
 }
