@@ -2,6 +2,7 @@ package com.zsm.commonexample.util;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 
@@ -52,5 +53,44 @@ public class CommonUtils
     public static <E> void swapE(List<E> list, int i, int j)
     {
         list.set(i, list.set(j, list.get(i)));
+    }
+
+    /**
+     * 类型转换，包括Long，long，String，Double，double，Integer，int，Date
+     * @param type
+     * @param value
+     * @param <T>
+     * @return
+     * @throws RuntimeException
+     */
+    public static<T> T typeTransfer(Class<T> type, String value)
+        throws RuntimeException
+    {
+        T t = null;
+        if (type.equals(Long.class) || type.equals(long.class))
+        {
+            t = Long.parseLong(value);
+        }
+        else if (type.equals(String.class))
+        {
+            t = value;
+        }
+        else if (type.equals(Double.class) || type.equals(double.class))
+        {
+            t = Double.parseDouble(value);
+        }
+        else if (type.equals(Integer.class) || type.equals(int.class))
+        {
+            t = Integer.parseInt(value);
+        }
+        else if (type.equals(Date.class))
+        {
+            t = Date.parse(value);
+        }
+        else
+        {
+            throw new RuntimeException(type.getName() + " type is invalid! value:" + value);
+        }
+        return t;
     }
 }

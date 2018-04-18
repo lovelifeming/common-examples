@@ -1,5 +1,7 @@
 package com.zsm.commonexample.fileoperator;
 
+import com.zsm.commonexample.util.CommonUtils;
+import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
@@ -7,6 +9,8 @@ import org.xml.sax.InputSource;
 
 import java.io.File;
 import java.io.FileReader;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -103,5 +107,51 @@ public class XmlDom4jUtils
             System.out.println("xml file resolve error!");
         }
         return t;
+    }
+
+    /**
+     * 获取节点属性，生成对应的对象
+     *
+     * @param element
+     * @param type
+     * @param <T>
+     * @return
+     */
+    public static <T> T getXmlAttribute(Element element, Class<T> type)
+        throws RuntimeException
+    {
+        try
+        {
+            // 获得节点的所有属性
+            List<Attribute> attributes = element.attributes();
+            T t = type.newInstance();
+            for (Attribute attribute : attributes)
+            {
+                // 获得节点属性名
+                String attrName = attribute.getName();
+                // 获得节点属性值
+                String attrValue = attribute.getValue();
+                // 通过属性名获取type对象中对应属性的setter方法
+                Field field = type.getDeclaredField(attrName);
+                // 获取属性类型
+                Class cla = field.getType();
+                //根据字段类型，把字符串转换为对应类型的值
+                //XmlUtils.convertType(type,field,attrValue);
+                Object o = CommonUtils.typeTransfer(cla, attrValue);
+
+                //获得setter方法
+                String methodName = "set" + attrName.substring(0, 1).toUpperCase() + attrName.substring(1);
+                Method method = type.getDeclaredMethod(methodName, cla);
+                //调用setter方法赋值
+                method.invoke(t, o);
+            }
+            return t;
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            new RuntimeException(e.getMessage());
+        }
+        return null;
     }
 }

@@ -1,9 +1,9 @@
 package com.zsm.commonexample.fileoperator;
 
+import com.zsm.commonexample.util.CommonUtils;
 import org.dom4j.Element;
 
 import java.lang.reflect.Field;
-import java.util.Date;
 
 
 /**
@@ -36,33 +36,30 @@ public class XmlUtils
             field.setAccessible(true);
             // 得到字段的属性名
             String name = field.getName();
-            String node = content.elementTextTrim(name);
-            if (node != null && !"".equals(node))
+            String value = content.elementTextTrim(name);
+            if (value != null && !"".equals(value))
             {
-                Class<?> cla = field.getType();
-                // 根据字段的类型将值转化为相应的类型，并设置到生成的实例中。
-                if (cla.equals(Long.class) || cla.equals(long.class))
-                {
-                    field.set(t, Long.parseLong(node));
-                }
-                else if (cla.equals(String.class))
-                {
-                    field.set(t, node);
-                }
-                else if (cla.equals(Double.class) || cla.equals(double.class))
-                {
-                    field.set(t, Double.parseDouble(node));
-                }
-                else if (cla.equals(Integer.class) || cla.equals(int.class))
-                {
-                    field.set(t, Integer.parseInt(node));
-                }
-                else if (cla.equals(Date.class))
-                {
-                    field.set(t, Date.parse(node));
-                }
+                convertType(t, field, value);
             }
         }
         return t;
+    }
+
+    /**
+     * 类型转换，包括Long，long，String，Double，double，Integer，int，Date
+     *
+     * @param t
+     * @param field
+     * @param value
+     * @param <T>
+     * @throws IllegalAccessException
+     */
+    public static <T> void convertType(T t, Field field, String value)
+        throws IllegalAccessException
+    {
+        Class<?> cla = field.getType();
+        // 根据字段的类型将值转化为相应的类型，并设置到生成的实例中。
+        Object o = CommonUtils.typeTransfer(cla, value);
+        field.set(t, o);
     }
 }
