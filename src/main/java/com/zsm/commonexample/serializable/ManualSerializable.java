@@ -1,7 +1,5 @@
 package com.zsm.commonexample.serializable;
 
-import com.sun.javaws.exceptions.InvalidArgumentException;
-
 import java.io.*;
 import java.util.Date;
 import java.util.List;
@@ -37,14 +35,12 @@ public class ManualSerializable implements Serializable, ObjectInputValidation
 
     private List<String> address;
 
-    public ManualSerializable(String name, int age, Date birthday, String remark,
-                              List<String> address)
-        throws InvalidArgumentException
+    public ManualSerializable(String name, int age, Date birthday, String remark, List<String> address)
     {
         if (age < 0 || age > 100)
         {
-            throw new InvalidArgumentException(
-                new String[] {"invalid data:" + age + " should be more than 0 and less than 100"});
+            throw new IllegalArgumentException(
+                String.format("invalid data: %s should be more than 0 and less than 100", age));
         }
         this.name = name;
         this.age = age;
