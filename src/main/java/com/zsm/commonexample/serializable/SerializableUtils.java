@@ -11,6 +11,7 @@ import java.nio.CharBuffer;
  * @Date:Created in 2018/1/23 22:31.
  * @Modified By:
  */
+@SuppressWarnings("unchecked")
 public class SerializableUtils
 {
     /**

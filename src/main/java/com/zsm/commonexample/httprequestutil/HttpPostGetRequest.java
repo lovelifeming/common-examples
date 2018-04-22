@@ -18,11 +18,13 @@ import java.net.*;
 
 
 /**
+ *
  * @Author: zengsm.
  * @Description:
  * @Date:Created in 2017/11/8 10:01.
  * @Modified By:
  */
+@SuppressWarnings("deprecation")
 public class HttpPostGetRequest
 {
     /**

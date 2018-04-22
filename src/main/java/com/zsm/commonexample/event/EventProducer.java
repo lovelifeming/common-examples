@@ -7,7 +7,7 @@ import org.springframework.core.GenericTypeResolver;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 
-
+@SuppressWarnings("unchecked")
 public class EventProducer
 {
     private static final Logger logger = Logger.getLogger(EventProducer.class);
