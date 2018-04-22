@@ -67,4 +67,27 @@ public class FileUtils
         return path;
     }
 
+    /**
+     * 获取文件相对路径,启动文件 /opt/rh/test.jar
+     */
+    public void showFilePath()
+    {
+        //  file:/opt/rh/test.jar!/com/zsm/commonexample/util/
+        String path = FileUtils.class.getResource("").getPath();
+        // 获取相对路径下路的资源文件 file:/opt/rh/test.jar!/com/zsm/commonexample/util/
+        String path1 = this.getClass().getResource("").getPath();
+
+        // /opt/rh/test.jar
+        String path2 = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+        // /opt/rh/test.jar
+        String path3 = this.getClass().getProtectionDomain().getCodeSource().getLocation().getFile();
+
+        //  test.jar
+        String path4 = System.getProperty("java.class.path");
+
+        // /opt/rh
+        String path5 = System.getProperty("user.dir");
+        // /opt/rh
+        String path6 = new File("").getAbsolutePath();
+    }
 }
