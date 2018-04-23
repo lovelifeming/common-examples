@@ -67,4 +67,25 @@ public class FileUtils
         return path;
     }
 
+    /**
+     * 获取文件路径
+     *
+     * @param directory 文件目录
+     * @param fileName  文件名称
+     * @return 全文件路径
+     */
+    public static String combineFilePath(String directory, String fileName)
+    {
+        if (!directory.endsWith(FILE_SEPARATOR))
+        {
+            directory += FILE_SEPARATOR;
+        }
+        File file = new File(directory);
+        if (!file.isDirectory())
+        { // 如果文件夹不存在就新建
+            file.mkdirs();
+        }
+        return directory + fileName;
+    }
+
 }
