@@ -24,6 +24,9 @@ public class FileUtils
      */
     public static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
+    public static final String LINE_SEPARATOR_A = java.security.AccessController.doPrivileged(
+        new sun.security.action.GetPropertyAction("line.separator"));
+
     /**
      * 获取真实路径，用系统分隔符替换
      *
@@ -76,6 +79,8 @@ public class FileUtils
         String path = FileUtils.class.getResource("").getPath();
         // 获取相对路径下路的资源文件 file:/opt/rh/test.jar!/com/zsm/commonexample/util/
         String path1 = this.getClass().getResource("").getPath();
+        // 获取相对路径下路的资源文件 file:/opt/rh/test.jar!/
+        String path11 = this.getClass().getResource("/").getPath();
 
         // /opt/rh/test.jar
         String path2 = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
@@ -89,6 +94,9 @@ public class FileUtils
         String path5 = System.getProperty("user.dir");
         // /opt/rh
         String path6 = new File("").getAbsolutePath();
+
+        //  file:/opt/rh/test.jar!/
+        String path7 = Thread.currentThread().getContextClassLoader().getResource("").getPath();
     }
 
     /**

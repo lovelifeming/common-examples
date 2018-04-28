@@ -19,7 +19,9 @@ public class DateUtils
     /**
      * 初始化时间格式化对象 SimpleDateFormat
      */
-    private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+    private static final long PERIOD_DAY = 24 * 60 * 60 * 1000;
 
     /**
      * 格式化时间
@@ -252,7 +254,23 @@ public class DateUtils
         return preHourDateList;
     }
 
-    public enum CharSet{
+    /**
+     * 增加或者减少天数，number为正整数增加，number为负数减少
+     *
+     * @param date
+     * @param number
+     * @return
+     */
+    public static Date addDay(Date date, int number)
+    {
+        Calendar startDT = Calendar.getInstance();
+        startDT.setTime(date);
+        startDT.add(Calendar.DAY_OF_YEAR, number);
+        return startDT.getTime();
+    }
+
+    public enum CharSet
+    {
         LONG_DATE,
         SHORT_DATA,
     }
