@@ -1,12 +1,20 @@
 package com.zsm.commonexample.fileoperator;
 
+import com.zsm.commonexample.main.Main;
 import com.zsm.commonexample.util.CommonUtils;
 import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.io.FileReader;
 import java.lang.reflect.Field;
@@ -18,6 +26,7 @@ import java.util.List;
 
 /**
  * Dom4j XML文件解析
+ * dom解析是直接把整个xml做parse操作，转成了document对象，这会消耗很多内存资源。所以一般用于一些配置文件或者较小的xml文件。
  *
  * @Author: zengsm.
  * @Description:
@@ -26,6 +35,8 @@ import java.util.List;
  */
 public class XmlDom4jUtils
 {
+    private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
+
     /**
      * 获取多个节点对象
      *
@@ -153,5 +164,51 @@ public class XmlDom4jUtils
             new RuntimeException(e.getMessage());
         }
         return null;
+    }
+
+    /**
+     * 读取dom解析XML文件
+     *
+     * @param filePath
+     */
+    public static void readXml(String filePath)
+    {
+        try
+        {
+            //获取documentBuilder的工厂对象实例(newInstance)
+            DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+            //用工厂对象生产出一个DocumentBuilder
+            DocumentBuilder builder = builderFactory.newDocumentBuilder();
+            //获取document
+            org.w3c.dom.Document document = builder.parse(filePath);
+            //获得Node节点或者元素
+            NodeList nodeList = document.getChildNodes();
+            org.w3c.dom.Element element = document.getDocumentElement();
+            //遍历节点
+            for (int i = 0, len = nodeList.getLength(); i < len; i++)
+            {
+                Node node = nodeList.item(i);
+                String nodeName = node.getNodeName();
+                String content = node.getTextContent();
+                System.out.println("Name:" + nodeName + " content:" + content);
+                NamedNodeMap attributes = node.getAttributes();
+                for (int j = 0, length = attributes.getLength(); j < length; j++)
+                {
+                    Node attr = attributes.item(i);
+                    String name = attr.getNodeName();
+                    System.out.println();
+                    NamedNodeMap nameMap = attr.getAttributes();
+                    String textContent = attr.getTextContent();
+                    System.out.println("Name:" + name + " content:" + textContent);
+                }
+                Node firstNode = node.getFirstChild();
+                NodeList childs = node.getChildNodes();
+            }
+        }
+        catch (Exception e)
+        {
+            LOGGER.error(e.getMessage());
+            e.printStackTrace();
+        }
     }
 }
