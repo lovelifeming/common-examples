@@ -2,6 +2,11 @@ package com.zsm.commonexample.fileoperator;
 
 import com.zsm.commonexample.main.Main;
 import org.apache.commons.collections.map.HashedMap;
+import org.jdom.Attribute;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.JDOMException;
+import org.jdom.input.SAXBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
@@ -10,13 +15,15 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 
 /**
  * sax解析是一个节点一个节点得往下读，读到后面的节点，就把前面的释放掉，所以不会存在耗费大量内存的情况。
- * Sax解析parse时需要实现一个 DefaultHandler 或者 HandlerBase 的子类，并覆盖节点操作方法
  *
  * @Author: zengsm.
  * @Description:
@@ -27,7 +34,12 @@ public class XmlSaxUtils
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 
-    public static void readXml(String filePath)
+    /**
+     * Sax解析parse时需要实现一个 DefaultHandler 或者 HandlerBase 的子类，并覆盖节点操作方法
+     *
+     * @param filePath
+     */
+    public static void readXmlParser(String filePath)
     {
         try
         {
@@ -36,6 +48,47 @@ public class XmlSaxUtils
             saxParser.parse(filePath, new MyHandler());
         }
         catch (Exception e)
+        {
+            LOGGER.error(e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 构建构建Builder获取元素孩子节点和属性
+     *
+     * @param filePath
+     */
+    public static void readXmlBuilder(String filePath)
+    {
+        SAXBuilder builder = new SAXBuilder();
+        try
+        {
+            Document document = builder.build(new File(filePath));
+            Element element = document.getRootElement();
+            List children = element.getChildren();
+            for (int i = 0, len = children.size(); i < len; i++)
+            {
+                Element ele = (Element)children.get(i);
+                String name = ele.getName();
+                String text = ele.getText();
+                System.out.println("name:" + name + " text:" + text);
+                List attributes = ele.getAttributes();
+                for (int j = 0, length = attributes.size(); j < length; j++)
+                {
+                    Attribute attribute = (Attribute)attributes.get(j);
+                    String attr = attribute.getName();
+                    String value = attribute.getValue();
+                    System.out.println("attribute:" + attr + " value:" + value);
+                }
+            }
+        }
+        catch (JDOMException e)
+        {
+            LOGGER.error(e.getMessage());
+            e.printStackTrace();
+        }
+        catch (IOException e)
         {
             LOGGER.error(e.getMessage());
             e.printStackTrace();

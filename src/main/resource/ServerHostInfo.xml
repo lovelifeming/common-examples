@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <root>
     <desc>1</desc>
-    <depict>ServerHost</depict>
+    <description>ServerHost</description>
     <serverhost>
         <hostname>master</hostname>
         <ip>192.168.1.100</ip>

@@ -1,9 +1,11 @@
 package com.zsm.commonexample.util;
 
-import org.junit.Ignore;
+import org.junit.Assert;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import java.io.File;
+import java.text.DateFormat;
+import java.util.Date;
 
 
 /**
@@ -12,17 +14,17 @@ import static org.junit.Assert.*;
  * @Date:Created in 2018/1/9 17:55.
  * @Modified By:
  */
-@Ignore
 public class FileUtilsTest
 {
     @Test
     public void makeFilePathByDate()
         throws Exception
     {
-        String path = "D:\\test";
-
+        String path = this.getClass().getResource("/").getPath();
         String filePath = FileUtils.makeFilePathByDate(path);
+        String fileName = DateFormat.getDateInstance(DateFormat.MEDIUM).format(new Date());
         System.out.println(filePath);
+        Assert.assertEquals(filePath, path + File.separator + fileName);
+        Assert.assertEquals(new File(filePath).delete(), true);
     }
-
 }

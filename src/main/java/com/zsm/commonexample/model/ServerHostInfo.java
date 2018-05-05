@@ -1,5 +1,8 @@
 package com.zsm.commonexample.model;
 
+import javax.xml.bind.annotation.XmlElement;
+
+
 /**
  * 服务器配置信息类
  *
@@ -8,6 +11,7 @@ package com.zsm.commonexample.model;
  * @Date:Created in 2018/4/17 23:01.
  * @Modified By:
  */
+//@XmlAccessorType(XmlAccessType.FIELD)
 public class ServerHostInfo
 {
     private String hostname;
@@ -20,6 +24,7 @@ public class ServerHostInfo
 
     private String password;
 
+    @XmlElement(name = "hostname")
     public String getHostname()
     {
         return hostname;
@@ -35,6 +40,7 @@ public class ServerHostInfo
         return ip;
     }
 
+    @XmlElement(name = "ip")
     public void setIp(String ip)
     {
         this.ip = ip;
@@ -45,6 +51,7 @@ public class ServerHostInfo
         return port;
     }
 
+    @XmlElement(name = "port")
     public void setPort(int port)
     {
         this.port = port;
@@ -55,6 +62,7 @@ public class ServerHostInfo
         return user;
     }
 
+    @XmlElement(name = "user")
     public void setUser(String user)
     {
         this.user = user;
@@ -65,6 +73,7 @@ public class ServerHostInfo
         return password;
     }
 
+    @XmlElement(name = "password")
     public void setPassword(String password)
     {
         this.password = password;

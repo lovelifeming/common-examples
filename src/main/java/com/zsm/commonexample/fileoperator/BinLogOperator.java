@@ -30,7 +30,7 @@ public class BinLogOperator
      * @param targetFile 文本文件
      * @throws IOException
      */
-    public static void EventDeserializer(String sourceFile, String targetFile)
+    public static void eventDeserializer(String sourceFile, String targetFile)
         throws IOException
     {
         File binlogFile = new File(sourceFile);
