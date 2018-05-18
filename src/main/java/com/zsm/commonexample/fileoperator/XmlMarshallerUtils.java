@@ -22,7 +22,12 @@ import java.io.Writer;
  * @XmlAttribute 将Java类的一个属性映射到与属性同名的一个XML属性。
  * @XmlElementWrapper 对于数组或集合（即包含多个元素的成员变量），生成一个包装该数组或集合的XML元素（称为包装器）,集合属性注解。
  * @XmlJavaTypeAdapter 使用定制的适配器（即扩展抽象类XmlAdapter并覆盖marshal()和unmarshal()方法）， 以序列化Java类为XML。
+ * <p>
+ * 根节点类必须添加：@XmlAccessorType(XmlAccessType.FIELD)和@XmlRootElement(name = "root")两个注解.
+ * 子节点类名称不存在混淆时可以不加注解标注.
+ * <p>
  * 1.添加@XmlAccessorType(XmlAccessType.FIELD)标识的类中，整个类字段可被序列化，@XmlElement只能标记字段。
+ * <p>
  * 2.未加@XmlAccessorType(XmlAccessType.FIELD)标识的类中，@XmlElement注解只能标记在get或者set方法上
  * @Author: zengsm.
  * @Description:
@@ -37,17 +42,17 @@ public class XmlMarshallerUtils
     /**
      * 将XML文件转化为自定义数据对象
      *
-     * @param xmlPath
+     * @param filePath
      * @param type
      * @param <T>
      * @return
      */
-    public static <T> T convertXmlToBean(String xmlPath, Class<T> type)
+    public static <T> T convertXmlToBean(String filePath, Class<T> type)
     {
         T t = null;
         try
         {
-            File file = new File(xmlPath);
+            File file = new File(filePath);
             JAXBContext context = JAXBContext.newInstance(type);
             Unmarshaller unmarshaller = context.createUnmarshaller();
             t = (T)unmarshaller.unmarshal(file);
