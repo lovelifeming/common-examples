@@ -1,4 +1,4 @@
-package com.zsm.commonexample.httprequestutil;
+package com.zsm.commonexample.httprequest;
 
 import com.zsm.commonexample.util.CommonUtils;
 import org.apache.http.HttpEntity;
