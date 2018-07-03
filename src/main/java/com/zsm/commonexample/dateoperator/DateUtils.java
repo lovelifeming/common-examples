@@ -2,10 +2,7 @@ package com.zsm.commonexample.dateoperator;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 
 /**
@@ -16,12 +13,22 @@ import java.util.List;
  */
 public class DateUtils
 {
+    private static final String DATE_LONG = "yyyy-MM-dd HH:mm:ss";      //2018-07-02 20:08:02
+
+    private static final String DATE_SHORT = "yyyy-MM-dd";              //2018-07-02
+
+    private static final String DATE_LONG_EM = "EEE MMM dd HH:mm:ss z yyyy";    //Mon Jul 02 20:08:02 CST 2018
+
+    private static final String DATE_SHORT_EM = "EEE MMM dd yyyy";      //Mon Jul 02 2018
+
+    private static final long PERIOD_DAY = 24 * 60 * 60 * 1000;
+
+    private static final String GMT_8 = "GMT+8";
+
     /**
      * 初始化时间格式化对象 SimpleDateFormat
      */
-    private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
-    private static final long PERIOD_DAY = 24 * 60 * 60 * 1000;
+    private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_LONG);
 
     /**
      * 格式化时间
@@ -31,6 +38,16 @@ public class DateUtils
      */
     public static String formatString(Date date)
     {
+        /**
+         * "2018-7-1 18:10:30" 输出结果：
+         * 06:10:30 下午
+         * 18:10:30
+         */
+        //输出日期格式为%tr，转化为12小时制
+        System.out.println(String.format("%tr", date));
+        //输出日期格式为%tT，转化为24小时制
+        System.out.println(String.format("%tT", date));
+
         return simpleDateFormat.format(date);
     }
 
@@ -267,6 +284,55 @@ public class DateUtils
         startDT.setTime(date);
         startDT.add(Calendar.DAY_OF_YEAR, number);
         return startDT.getTime();
+    }
+
+    /**
+     * 将国际化的时间格式转换为标准时间
+     *
+     * @param date 时间字符串    EEE MMM dd HH:mm:ss z yyyy
+     * @return yyyy-MM-dd
+     * @throws ParseException
+     */
+    public static String dateTransformationShort(String date)
+        throws ParseException
+    {
+        return transformation(date, DATE_SHORT_EM, DATE_SHORT, Locale.US, GMT_8);
+    }
+
+    /**
+     * 将国际化的时间格式转换为标准时间
+     *
+     * @param date 时间字符串    EEE MMM dd HH:mm:ss z yyyy
+     * @return yyyy-MM-dd HH:mm:ss
+     * @throws ParseException
+     */
+    public static String dateTransformationLong(String date)
+        throws ParseException
+    {
+        return transformation(date, DATE_LONG_EM, DATE_LONG, Locale.US, GMT_8);
+    }
+
+    /**
+     * 时间格式转换
+     *
+     * @param date         时间字符串,输入时间格式必须和输入格式一致
+     * @param sourceFormat 时间字符串输入格式:   EEE MMM dd HH:mm:ss z yyyy
+     * @param targetFormat 时间字符串输出格式:   yyyy-MM-dd HH:mm:ss
+     * @param locale       时区
+     * @return
+     * @throws ParseException
+     */
+    public static String transformation(String date, String sourceFormat, String targetFormat,
+                                        Locale locale, String timeZone)
+        throws ParseException
+    {
+        SimpleDateFormat source = new SimpleDateFormat(sourceFormat, locale);
+        source.setTimeZone(TimeZone.getTimeZone(timeZone));
+
+        SimpleDateFormat target = new SimpleDateFormat(targetFormat, locale);
+        target.setTimeZone(TimeZone.getTimeZone(timeZone));
+        Date parse = source.parse(date);
+        return target.format(parse);
     }
 
     public enum CharSet
