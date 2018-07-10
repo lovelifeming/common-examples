@@ -7,7 +7,9 @@ import java.security.MessageDigest;
 
 
 /**
- * MD5(message-digest algorithm 5)(信息-摘要算法)缩写，广泛用于加密和解密技术，常用于文件校验。属于单向加密算法。
+ * MD5(message-digest algorithm 5)(信息-摘要算法)缩写，是一个数据的数字指纹.即对一个任意长度的数据进行计算,产生一个唯一指纹号.
+ * 广泛用于加密和解密技术，常用于文件校验。属于单向加密算法。
+ * 特性：1.两个不同的数据,难以生成相同的指纹号。2.对于指定的指纹号,难以逆向计算出原始数据
  *
  * @Author: zengsm.
  * @Description:
