@@ -2,8 +2,12 @@ package com.zsm.commonexample.Encryption;
 
 import com.sun.org.apache.xerces.internal.impl.dv.util.HexBin;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
@@ -28,12 +32,12 @@ public class RSA extends BaseSA
     /**
      * RSA最大加密明文大小
      */
-    private static final int MAX_ENCRYPT_BLOCK = 117;
+    private static final int MAX_ENCRYPT_BLOCK = 53;
 
     /**
      * RSA最大解密密文大小
      */
-    private static final int MAX_DECRYPT_BLOCK = 128;
+    private static final int MAX_DECRYPT_BLOCK = 64;
 
     //region sign 数字签名
 
@@ -90,6 +94,17 @@ public class RSA extends BaseSA
     /**
      * 生成公钥和私钥对，publicKey，privateKey
      *
+     * @return 公钥和私钥对, 经过十六进制转换
+     */
+    public static Map<String, String> generatePublicKeyAndPrivateKeyHex()
+        throws NoSuchAlgorithmException
+    {
+        return generatePublicKeyAndPrivateKeyHex(RSA);
+    }
+
+    /**
+     * 生成公钥和私钥对，publicKey，privateKey
+     *
      * @return 公钥和私钥对
      */
     public static Map<String, byte[]> generatePublicKeyAndPrivateKey()
@@ -125,144 +140,180 @@ public class RSA extends BaseSA
     //endregion
 
     //region RSA加密解密
-    public static byte[] decryptByPrivateKey(byte[] encryptedData, String privateKey)
-        throws Exception
+
+    /**
+     * 使用公钥对数据加密
+     *
+     * @param plaintext 明文
+     * @param publicKey 公钥
+     * @return
+     */
+    public static String encryptByPublicKey(String plaintext, String publicKey)
+        throws NoSuchPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, IOException,
+        BadPaddingException, InvalidKeyException, InvalidKeySpecException
     {
-        byte[] keyBytes = HexBin.decode(privateKey);
-        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(keyBytes);
+        return HexBin.encode(encryptByPublicKey(plaintext.getBytes(), HexBin.decode(publicKey)));
+    }
+
+    /**
+     * 使用公钥对数据加密
+     *
+     * @param plaintext 明文
+     * @param publicKey 公钥
+     * @return
+     */
+    public static byte[] encryptByPublicKey(byte[] plaintext, byte[] publicKey)
+        throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidKeyException,
+        BadPaddingException, IllegalBlockSizeException, IOException
+    {
+        X509EncodedKeySpec keySpec = new X509EncodedKeySpec(publicKey);
+        KeyFactory keyFactory = KeyFactory.getInstance(RSA);
+        Key key = keyFactory.generatePublic(keySpec);
+        // 对数据加密
+        Cipher cipher = Cipher.getInstance(keyFactory.getAlgorithm());
+        cipher.init(Cipher.ENCRYPT_MODE, key);
+        byte[] bytes = doFinalData(plaintext, cipher, MAX_ENCRYPT_BLOCK);
+        return bytes;
+    }
+
+    /**
+     * 使用私钥对数据加密
+     *
+     * @param plaintext  明文
+     * @param privateKey 私钥
+     * @return
+     */
+    public static String encryptByPrivateKey(String plaintext, String privateKey)
+        throws NoSuchPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, IOException,
+        BadPaddingException, InvalidKeyException, InvalidKeySpecException
+    {
+        return HexBin.encode(encryptByPrivateKey(plaintext.getBytes(), HexBin.decode(privateKey)));
+    }
+
+    /**
+     * 使用私钥对数据加密
+     *
+     * @param plaintext  明文
+     * @param privateKey 私钥
+     * @return
+     */
+    public static byte[] encryptByPrivateKey(byte[] plaintext, byte[] privateKey)
+        throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidKeyException,
+        BadPaddingException, IllegalBlockSizeException, IOException
+    {
+        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(privateKey);
+        KeyFactory keyFactory = KeyFactory.getInstance(RSA);
+        Key key = keyFactory.generatePrivate(keySpec);
+        Cipher cipher = Cipher.getInstance(keyFactory.getAlgorithm());
+        cipher.init(Cipher.ENCRYPT_MODE, key);
+        byte[] bytes = doFinalData(plaintext, cipher, MAX_ENCRYPT_BLOCK);
+        return bytes;
+    }
+
+    /**
+     * 使用私钥对数据解密
+     *
+     * @param ciphertext 密文
+     * @param privateKey 私钥
+     * @return
+     */
+    public static String decryptByPrivateKey(String ciphertext, String privateKey)
+        throws NoSuchPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, IOException,
+        BadPaddingException, InvalidKeyException, InvalidKeySpecException
+    {
+        return new String(decryptByPrivateKey(HexBin.decode(ciphertext), HexBin.decode(privateKey)));
+    }
+
+    /**
+     * 使用私钥对数据解密
+     *
+     * @param ciphertext 密文
+     * @param privateKey 私钥
+     * @return
+     */
+    public static byte[] decryptByPrivateKey(byte[] ciphertext, byte[] privateKey)
+        throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidKeyException,
+        BadPaddingException, IllegalBlockSizeException, IOException
+    {
+        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(privateKey);
         KeyFactory keyFactory = KeyFactory.getInstance(RSA);
         Key key = keyFactory.generatePrivate(keySpec);
         Cipher cipher = Cipher.getInstance(keyFactory.getAlgorithm());
         cipher.init(Cipher.DECRYPT_MODE, key);
-        int inputLen = encryptedData.length;
-        byte[] result = new byte[(encryptedData.length / MAX_DECRYPT_BLOCK + 1) * MAX_ENCRYPT_BLOCK];
-        int offSet = 0;
-        byte[] cache;
-        int i = 0;
-        int len = 0;
-        // 对数据分段解密
-        while (inputLen - offSet > 0)
-        {
-            if (inputLen - offSet > MAX_ENCRYPT_BLOCK)
-            {
-                cache = cipher.doFinal(encryptedData, offSet, MAX_DECRYPT_BLOCK);
-            }
-            else
-            {
-                cache = cipher.doFinal(encryptedData, offSet, inputLen - offSet);
-            }
-            i++;
-            offSet = i * MAX_DECRYPT_BLOCK;
-            for (byte b : cache)
-            {
-                result[len++] = b;
-            }
-        }
-        return result;
+        byte[] bytes = doFinalData(ciphertext, cipher, MAX_DECRYPT_BLOCK);
+        return bytes;
     }
 
-    public static byte[] decryptByPublicKey(byte[] encryptedData, String publicKey)
-        throws Exception
+    /**
+     * 使用公钥对数据解密
+     *
+     * @param ciphertext 密文
+     * @param publicKey  公钥
+     * @return
+     */
+    public static String decryptByPublicKey(String ciphertext, String publicKey)
+        throws NoSuchPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, IOException,
+        BadPaddingException, InvalidKeyException, InvalidKeySpecException
     {
-        byte[] keyBytes = HexBin.decode(publicKey);
-        X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(keyBytes);
+        return new String(decryptByPublicKey(HexBin.decode(ciphertext), HexBin.decode(publicKey)));
+    }
+
+    /**
+     * 使用公钥对数据解密
+     *
+     * @param ciphertext 密文
+     * @param publicKey  公钥
+     * @return
+     */
+    public static byte[] decryptByPublicKey(byte[] ciphertext, byte[] publicKey)
+        throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidKeyException,
+        BadPaddingException, IllegalBlockSizeException, IOException
+    {
+        X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(publicKey);
         KeyFactory keyFactory = KeyFactory.getInstance(RSA);
-        Key publicK = keyFactory.generatePublic(x509KeySpec);
+        Key key = keyFactory.generatePublic(x509KeySpec);
         Cipher cipher = Cipher.getInstance(keyFactory.getAlgorithm());
-        cipher.init(Cipher.DECRYPT_MODE, publicK);
-        int inputLen = encryptedData.length;
+        cipher.init(Cipher.DECRYPT_MODE, key);
+        byte[] bytes = doFinalData(ciphertext, cipher, MAX_DECRYPT_BLOCK);
+        return bytes;
+    }
+
+    /**
+     * 数据分段加密解密操作
+     *
+     * @param data   数据
+     * @param cipher 密码器
+     * @param block  数据块大小
+     * @return
+     */
+    private static byte[] doFinalData(byte[] data, Cipher cipher, int block)
+        throws IllegalBlockSizeException, BadPaddingException, IOException
+    {
+        int length = data.length;
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         int offSet = 0;
         byte[] cache;
         int i = 0;
         // 对数据分段解密
-        while (inputLen - offSet > 0)
+        while (length - offSet > 0)
         {
-            if (inputLen - offSet > 128)
+            if (length - offSet > block)
             {
-                cache = cipher.doFinal(encryptedData, offSet, 128);
+                cache = cipher.doFinal(data, offSet, block);
             }
             else
             {
-                cache = cipher.doFinal(encryptedData, offSet, inputLen - offSet);
+                cache = cipher.doFinal(data, offSet, length - offSet);
             }
             out.write(cache, 0, cache.length);
             i++;
-            offSet = i * MAX_DECRYPT_BLOCK;
+            offSet = i * block;
         }
-        byte[] decryptedData = out.toByteArray();
+        byte[] bytes = out.toByteArray();
         out.close();
-        return decryptedData;
+        return bytes;
     }
 
-    public static byte[] encryptByPublicKey(byte[] data, String publicKey)
-        throws Exception
-    {
-        byte[] keyBytes = HexBin.decode(publicKey);
-        X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(keyBytes);
-        KeyFactory keyFactory = KeyFactory.getInstance(RSA);
-        Key publicK = keyFactory.generatePublic(x509KeySpec);
-        // 对数据加密
-        Cipher cipher = Cipher.getInstance(keyFactory.getAlgorithm());
-        cipher.init(Cipher.ENCRYPT_MODE, publicK);
-        int inputLen = data.length;
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        int offSet = 0;
-        byte[] cache;
-        int i = 0;
-        // 对数据分段加密
-        while (inputLen - offSet > 0)
-        {
-            if (inputLen - offSet > MAX_ENCRYPT_BLOCK)
-            {
-                cache = cipher.doFinal(data, offSet, MAX_ENCRYPT_BLOCK);
-            }
-            else
-            {
-                cache = cipher.doFinal(data, offSet, inputLen - offSet);
-            }
-            out.write(cache, 0, cache.length);
-            i++;
-            offSet = i * MAX_ENCRYPT_BLOCK;
-        }
-        byte[] encryptedData = out.toByteArray();
-        out.close();
-        return encryptedData;
-    }
-
-    public static byte[] encryptByPrivateKey(byte[] data, String privateKey)
-        throws Exception
-    {
-        byte[] keyBytes = HexBin.decode(privateKey);
-        PKCS8EncodedKeySpec pkcs8KeySpec = new PKCS8EncodedKeySpec(keyBytes);
-        KeyFactory keyFactory = KeyFactory.getInstance(RSA);
-        Key privateK = keyFactory.generatePrivate(pkcs8KeySpec);
-        Cipher cipher = Cipher.getInstance(keyFactory.getAlgorithm());
-        cipher.init(Cipher.ENCRYPT_MODE, privateK);
-        int inputLen = data.length;
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        int offSet = 0;
-        byte[] cache;
-        int i = 0;
-        // 对数据分段加密
-        while (inputLen - offSet > 0)
-        {
-            if (inputLen - offSet > MAX_ENCRYPT_BLOCK)
-            {
-                cache = cipher.doFinal(data, offSet, MAX_ENCRYPT_BLOCK);
-            }
-            else
-            {
-                cache = cipher.doFinal(data, offSet, inputLen - offSet);
-            }
-            out.write(cache, 0, cache.length);
-            i++;
-            offSet = i * MAX_ENCRYPT_BLOCK;
-        }
-        byte[] encryptedData = out.toByteArray();
-        out.close();
-        return encryptedData;
-    }
     //endregion
 
 }

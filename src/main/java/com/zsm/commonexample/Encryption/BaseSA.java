@@ -122,7 +122,7 @@ public abstract class BaseSA
      * @return 公钥和私钥对
      * @throws NoSuchAlgorithmException
      */
-    public static KeyPair generateKeyPair(int keySize, String keyAlgorithm)
+    protected static KeyPair generateKeyPair(int keySize, String keyAlgorithm)
         throws NoSuchAlgorithmException
     {
         KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(keyAlgorithm);
@@ -138,7 +138,7 @@ public abstract class BaseSA
      * @param keySize 密钥长度必须是64的倍数，在512到1024位之间或者2048
      * @return 公钥和私钥对
      */
-    public static Map<String, byte[]> generatePublicKeyAndPrivateKey(int keySize, String keyAlgorithm)
+    protected static Map<String, byte[]> generatePublicKeyAndPrivateKey(int keySize, String keyAlgorithm)
         throws NoSuchAlgorithmException
     {
         Map<String, byte[]> keyPairs = new HashMap<String, byte[]>();
@@ -155,7 +155,7 @@ public abstract class BaseSA
      *
      * @return 公钥和私钥对, 经过十六进制转换
      */
-    public static Map<String, String> generatePublicKeyAndPrivateKeyHex(String keyAlgorithm)
+    protected static Map<String, String> generatePublicKeyAndPrivateKeyHex(String keyAlgorithm)
         throws NoSuchAlgorithmException
     {
         Map<String, byte[]> map = generatePublicKeyAndPrivateKey(KEY_SIZE, keyAlgorithm);
