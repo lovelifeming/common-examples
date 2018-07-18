@@ -29,8 +29,6 @@ public abstract class BaseSA
      */
     protected static final String PRIVATE_KEY = "privateKey";
 
-    protected static final int KEY_SIZE = 512;
-
     /**
      * @param plaintext     签名数据
      * @param privateKey    私钥
@@ -155,10 +153,10 @@ public abstract class BaseSA
      *
      * @return 公钥和私钥对, 经过十六进制转换
      */
-    protected static Map<String, String> generatePublicKeyAndPrivateKeyHex(String keyAlgorithm)
+    protected static Map<String, String> generatePublicKeyAndPrivateKeyHex(int keySize, String keyAlgorithm)
         throws NoSuchAlgorithmException
     {
-        Map<String, byte[]> map = generatePublicKeyAndPrivateKey(KEY_SIZE, keyAlgorithm);
+        Map<String, byte[]> map = generatePublicKeyAndPrivateKey(keySize, keyAlgorithm);
         Iterator<Map.Entry<String, byte[]>> iterator = map.entrySet().iterator();
         Map<String, String> keyPairs = new HashMap<>();
         while (iterator.hasNext())

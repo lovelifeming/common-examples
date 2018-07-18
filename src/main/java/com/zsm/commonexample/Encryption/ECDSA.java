@@ -47,6 +47,9 @@ public class ECDSA extends BaseSA
      */
     private static final String PRIVATE_KEY = "privateKey";
 
+    /**
+     * ECDSA KeySize 是256
+     */
     private static final int KEY_SIZE = 256;
 
     public static byte[] sign(byte[] plaintext, byte[] privateKey)
@@ -94,7 +97,7 @@ public class ECDSA extends BaseSA
     public static Map<String, String> generatePublicKeyAndPrivateKeyHex()
         throws NoSuchAlgorithmException
     {
-        return generatePublicKeyAndPrivateKeyHex(EC);
+        return generatePublicKeyAndPrivateKeyHex(KEY_SIZE, EC);
     }
 
     /**
@@ -139,70 +142,4 @@ public class ECDSA extends BaseSA
     {
         return generateKeyPair(keySize, EC);
     }
-
-    /**
-     * 解密<br>
-     * 用私钥解密
-     *
-     * @param data
-     * @param key
-     * @return
-     * @throws Exception
-     */
-    public static byte[] decrypt(byte[] data, String key) throws Exception {
-        // 对密钥解密
-        byte[] keyBytes = decryptBASE64(key);
-
-        // 取得私钥
-        PKCS8EncodedKeySpec pkcs8KeySpec = new PKCS8EncodedKeySpec(keyBytes);
-        KeyFactory keyFactory = ECKeyFactory.INSTANCE;
-
-        ECPrivateKey priKey = (ECPrivateKey) keyFactory
-            .generatePrivate(pkcs8KeySpec);
-
-        ECPrivateKeySpec ecPrivateKeySpec = new ECPrivateKeySpec(priKey.getS(),
-            priKey.getParams());
-
-        // 对数据解密
-        // TODO Chipher不支持EC算法 未能实现
-        Cipher cipher = new NullCipher();
-        // Cipher.getInstance(ALGORITHM, keyFactory.getProvider());
-        cipher.init(Cipher.DECRYPT_MODE, priKey, ecPrivateKeySpec.getParams());
-
-        return cipher.doFinal(data);
-    }
-    /**
-     * 加密<br>
-     * 用公钥加密
-     *
-     * @param data
-     * @param privateKey
-     * @return
-     * @throws Exception
-     */
-    public static byte[] encrypt(byte[] data, String privateKey)
-        throws Exception {
-        // 对公钥解密
-        byte[] keyBytes = decryptBASE64(privateKey);
-
-        // 取得公钥
-        X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(keyBytes);
-        KeyFactory keyFactory = ECKeyFactory.INSTANCE;
-
-        ECPublicKey pubKey = (ECPublicKey) keyFactory
-            .generatePublic(x509KeySpec);
-
-        ECPublicKeySpec ecPublicKeySpec = new ECPublicKeySpec(pubKey.getW(),
-            pubKey.getParams());
-
-        // 对数据加密
-        // TODO Chipher不支持EC算法 未能实现
-        Cipher cipher = new NullCipher();
-        // Cipher.getInstance(ALGORITHM, keyFactory.getProvider());
-        cipher.init(Cipher.ENCRYPT_MODE, pubKey, ecPublicKeySpec.getParams());
-
-        return cipher.doFinal(data);
-    }
-
-
 }

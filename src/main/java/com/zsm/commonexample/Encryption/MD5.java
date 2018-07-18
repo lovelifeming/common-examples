@@ -31,7 +31,7 @@ public class MD5
     }
 
     /**
-     * MD5加密, MD5是不可逆的加密算法，只可以加密不可以解密。
+     * MD5签名, MD5是不可逆的加密算法，只可以加密不可以解密。
      *
      * @param bytes 明文字节
      * @return 加密字节数组
@@ -46,7 +46,7 @@ public class MD5
     }
 
     /**
-     * MD5加密, MD5是不可逆的加密算法，只可以加密不可以解密。
+     * MD5签名, MD5是不可逆的加密算法，只可以加密不可以解密。
      *
      * @param sourceString 加密明文
      * @return 十六进制加密密文

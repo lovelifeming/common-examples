@@ -30,6 +30,12 @@ public class RSA extends BaseSA
     private static final String MD5_WITH_RSA = "MD5withRSA";
 
     /**
+     * keySize: 512,576,640,704,768,832,896,960,1088,1024,2048
+     * keySize 密钥长度必须是64的倍数，在512到1024位之间或者2048
+     */
+    private static final int KEY_SIZE = 512;
+
+    /**
      * RSA最大加密明文大小
      */
     private static final int MAX_ENCRYPT_BLOCK = 53;
@@ -99,7 +105,7 @@ public class RSA extends BaseSA
     public static Map<String, String> generatePublicKeyAndPrivateKeyHex()
         throws NoSuchAlgorithmException
     {
-        return generatePublicKeyAndPrivateKeyHex(RSA);
+        return generatePublicKeyAndPrivateKeyHex(KEY_SIZE, RSA);
     }
 
     /**

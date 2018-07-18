@@ -1,6 +1,6 @@
-package com.zsm.commonexample.fileoperator;
+package com.zsm.commonexample.util;
 
-import com.zsm.commonexample.util.FileUtils;
+import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +20,54 @@ import java.io.*;
 public class Base64Utils
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(Base64Utils.class);
+
+    /**
+     * BASE64加密
+     *
+     * @param ciphertext 密文
+     * @return
+     */
+    public static String encryBASE64(byte[] ciphertext)
+    {
+        return new BASE64Encoder().encodeBuffer(ciphertext);
+    }
+
+    /**
+     * BASE64加密
+     *
+     * @param ciphertext 密文
+     * @return
+     */
+    public static String encryBASE64ByDecode(String ciphertext)
+    {
+        return new BASE64Encoder().encodeBuffer(Base64.decode(ciphertext));
+    }
+
+    /**
+     * BASE64解密
+     *
+     * @param plaintext 明文
+     * @return
+     * @throws IOException
+     */
+    public static byte[] decryptBASE64(String plaintext)
+        throws IOException
+    {
+        return new BASE64Decoder().decodeBuffer(plaintext);
+    }
+
+    /**
+     * BASE64解密
+     *
+     * @param plaintext 明文
+     * @return
+     * @throws IOException
+     */
+    public static String decryptBASE64ByEncode(String plaintext)
+        throws IOException
+    {
+        return Base64.encode(new BASE64Decoder().decodeBuffer(plaintext));
+    }
 
     /**
      * 保存base64字符串到文件
