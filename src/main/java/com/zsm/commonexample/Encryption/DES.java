@@ -29,6 +29,7 @@ public class DES
     private static final String DES = "DES";
 
     private static final String DES_KEY = "AR=l@^i+g(&*$!)mA;sq.d?F";
+
     private static final String DEFAULT_KEY = "AR=l@^i+";
 
     public static String encryption(String plaintext)

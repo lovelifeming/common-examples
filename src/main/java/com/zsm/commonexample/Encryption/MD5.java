@@ -3,7 +3,9 @@ package com.zsm.commonexample.Encryption;
 import com.zsm.commonexample.util.CommonUtils;
 import org.apache.commons.lang.StringUtils;
 
+import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 
 /**
@@ -26,6 +28,7 @@ public class MD5
      * @return
      */
     public static boolean validate(String sourceString, String ciphertext)
+        throws UnsupportedEncodingException, NoSuchAlgorithmException
     {
         return ciphertext.equals(encodeByMD5(sourceString));
     }
@@ -52,23 +55,17 @@ public class MD5
      * @return 十六进制加密密文
      */
     public static String encodeByMD5(String sourceString)
+        throws NoSuchAlgorithmException, UnsupportedEncodingException
     {
         if (!StringUtils.isEmpty(sourceString))
         {
-            try
-            {
-                // 获得MD5摘要算法的 MessageDigest 对象
-                MessageDigest md = MessageDigest.getInstance("MD5");
-                // 使用指定的字节更新摘要,获得密文
-                byte[] bytes = md.digest(sourceString.getBytes("UTF-8"));
-                // 把密文转换成十六进制的字符串形式
-                String hexString = CommonUtils.byteArrayToHexString(bytes);
-                return hexString.toUpperCase();
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-            }
+            // 获得MD5摘要算法的 MessageDigest 对象
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            // 使用指定的字节更新摘要,获得密文
+            byte[] bytes = md.digest(sourceString.getBytes("UTF-8"));
+            // 把密文转换成十六进制的字符串形式
+            String hexString = CommonUtils.byteArrayToHexString(bytes);
+            return hexString.toUpperCase();
         }
         return null;
     }

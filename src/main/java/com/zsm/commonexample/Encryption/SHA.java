@@ -43,6 +43,7 @@ public class SHA
         md5.update(bytes);
         return md5.digest();
     }
+
     /**
      * 进行SHA签名
      *

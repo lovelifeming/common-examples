@@ -73,8 +73,8 @@ public abstract class BaseSA
      * @param signAlgorithm 签名算法名
      * @return
      */
-    protected static boolean verify(byte[] plaintext, byte[] publicKey, byte[] sign,
-                                    String keyAlgorithm, String signAlgorithm)
+    protected static boolean verify(byte[] plaintext, byte[] publicKey, byte[] sign, String keyAlgorithm,
+                                    String signAlgorithm)
         throws NoSuchAlgorithmException, InvalidKeySpecException, InvalidKeyException, SignatureException
     {
         // 构造X509EncodedKeySpec对象

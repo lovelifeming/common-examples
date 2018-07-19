@@ -1,14 +1,17 @@
 package com.zsm.commonexample.Encryption;
 
+import com.sun.org.apache.xml.internal.security.exceptions.Base64DecodingException;
 import com.sun.org.apache.xml.internal.security.utils.Base64;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import java.io.FileInputStream;
-import java.security.KeyStore;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.Signature;
+import java.io.IOException;
+import java.security.*;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.Date;
@@ -22,7 +25,7 @@ import java.util.Date;
  * @Date:Created in 2018/7/10.
  * @Modified By:
  */
-public class CertificateClient
+public abstract class CertificateClient
 {
     /**
      * Java密钥库(Java Key Store，JKS)KEY_STORE
@@ -34,14 +37,13 @@ public class CertificateClient
     /**
      * 由KeyStore获得私钥
      *
-     * @param keyStorePath
-     * @param alias
-     * @param password
+     * @param keyStorePath 密钥存储路径
+     * @param alias        别名
+     * @param password     密码
      * @return
-     * @throws Exception
      */
     private static PrivateKey getPrivateKey(String keyStorePath, String alias, String password)
-        throws Exception
+        throws CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException, UnrecoverableKeyException
     {
         KeyStore ks = getKeyStore(keyStorePath, password);
         PrivateKey key = (PrivateKey)ks.getKey(alias, password.toCharArray());
@@ -51,12 +53,11 @@ public class CertificateClient
     /**
      * 由Certificate获得公钥
      *
-     * @param certificatePath
+     * @param certificatePath 证书路径
      * @return
-     * @throws Exception
      */
     private static PublicKey getPublicKey(String certificatePath)
-        throws Exception
+        throws CertificateException, IOException
     {
         Certificate certificate = getCertificate(certificatePath);
         PublicKey key = certificate.getPublicKey();
@@ -66,12 +67,11 @@ public class CertificateClient
     /**
      * 获得Certificate
      *
-     * @param certificatePath
+     * @param certificatePath 证书路径
      * @return
-     * @throws Exception
      */
     private static Certificate getCertificate(String certificatePath)
-        throws Exception
+        throws CertificateException, IOException
     {
         CertificateFactory certificateFactory = CertificateFactory.getInstance(X509);
         FileInputStream in = new FileInputStream(certificatePath);
@@ -83,14 +83,13 @@ public class CertificateClient
     /**
      * 获得Certificate
      *
-     * @param keyStorePath
-     * @param alias
-     * @param password
+     * @param keyStorePath 密钥存储路径
+     * @param alias        别名
+     * @param password     密码
      * @return
-     * @throws Exception
      */
     private static Certificate getCertificate(String keyStorePath, String alias, String password)
-        throws Exception
+        throws CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException
     {
         KeyStore ks = getKeyStore(keyStorePath, password);
         Certificate certificate = ks.getCertificate(alias);
@@ -100,13 +99,12 @@ public class CertificateClient
     /**
      * 获得KeyStore
      *
-     * @param keyStorePath
-     * @param password
+     * @param keyStorePath 密钥存储路径
+     * @param password     密码
      * @return
-     * @throws Exception
      */
     private static KeyStore getKeyStore(String keyStorePath, String password)
-        throws Exception
+        throws IOException, KeyStoreException, CertificateException, NoSuchAlgorithmException
     {
         FileInputStream is = new FileInputStream(keyStorePath);
         KeyStore ks = KeyStore.getInstance(KEY_STORE);
@@ -118,90 +116,91 @@ public class CertificateClient
     /**
      * 私钥加密
      *
-     * @param data
-     * @param keyStorePath
-     * @param alias
-     * @param password
+     * @param plaintext    明文
+     * @param keyStorePath 密钥存储路径
+     * @param alias        别名
+     * @param password     密码
      * @return
-     * @throws Exception
      */
-    public static byte[] encryptByPrivateKey(byte[] data, String keyStorePath, String alias, String password)
-        throws Exception
+    public static byte[] encryptByPrivateKey(byte[] plaintext, String keyStorePath, String alias, String password)
+        throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException,
+        IllegalBlockSizeException, UnrecoverableKeyException, CertificateException, KeyStoreException, IOException
     {
         // 取得私钥
         PrivateKey privateKey = getPrivateKey(keyStorePath, alias, password);
         // 对数据加密
         Cipher cipher = Cipher.getInstance(privateKey.getAlgorithm());
         cipher.init(Cipher.ENCRYPT_MODE, privateKey);
-        return cipher.doFinal(data);
+        return cipher.doFinal(plaintext);
     }
 
     /**
      * 私钥解密
      *
-     * @param data
-     * @param keyStorePath
-     * @param alias
-     * @param password
+     * @param ciphertext   密文
+     * @param keyStorePath 密钥存储路径
+     * @param alias        别名
+     * @param password     密码
      * @return
-     * @throws Exception
      */
-    public static byte[] decryptByPrivateKey(byte[] data, String keyStorePath, String alias, String password)
-        throws Exception
+    public static byte[] decryptByPrivateKey(byte[] ciphertext, String keyStorePath, String alias, String password)
+        throws UnrecoverableKeyException, CertificateException, NoSuchAlgorithmException, KeyStoreException,
+        IOException, NoSuchPaddingException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException
     {
         // 取得私钥
         PrivateKey privateKey = getPrivateKey(keyStorePath, alias, password);
         // 对数据加密
         Cipher cipher = Cipher.getInstance(privateKey.getAlgorithm());
         cipher.init(Cipher.DECRYPT_MODE, privateKey);
-        return cipher.doFinal(data);
+        return cipher.doFinal(ciphertext);
     }
 
     /**
      * 公钥加密
      *
-     * @param data
-     * @param certificatePath
+     * @param plaintext       明文
+     * @param certificatePath 证书路径
      * @return
-     * @throws Exception
      */
-    public static byte[] encryptByPublicKey(byte[] data, String certificatePath)
-        throws Exception
+    public static byte[] encryptByPublicKey(byte[] plaintext, String certificatePath)
+        throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException,
+        IllegalBlockSizeException, CertificateException, IOException
     {
         // 取得公钥
         PublicKey publicKey = getPublicKey(certificatePath);
         // 对数据加密
         Cipher cipher = Cipher.getInstance(publicKey.getAlgorithm());
         cipher.init(Cipher.ENCRYPT_MODE, publicKey);
-        return cipher.doFinal(data);
+        return cipher.doFinal(plaintext);
     }
 
     /**
      * 公钥解密
      *
-     * @param data
-     * @param certificatePath
+     * @param ciphertext      密文
+     * @param certificatePath 证书路径
      * @return
-     * @throws Exception
      */
-    public static byte[] decryptByPublicKey(byte[] data, String certificatePath)
-        throws Exception
+    public static byte[] decryptByPublicKey(byte[] ciphertext, String certificatePath)
+        throws BadPaddingException, IllegalBlockSizeException, InvalidKeyException, NoSuchPaddingException,
+        NoSuchAlgorithmException, CertificateException, IOException
     {
         // 取得公钥
         PublicKey publicKey = getPublicKey(certificatePath);
         // 对数据加密
         Cipher cipher = Cipher.getInstance(publicKey.getAlgorithm());
         cipher.init(Cipher.DECRYPT_MODE, publicKey);
-        return cipher.doFinal(data);
+        return cipher.doFinal(ciphertext);
     }
 
     /**
      * 验证Certificate
      *
-     * @param certificatePath
+     * @param certificatePath 证书路径
      * @return
      */
     public static boolean verifyCertificate(String certificatePath)
+        throws CertificateException, IOException
     {
         return verifyCertificate(new Date(), certificatePath);
     }
@@ -209,32 +208,25 @@ public class CertificateClient
     /**
      * 验证Certificate是否过期或无效
      *
-     * @param date
-     * @param certificatePath
+     * @param date            时间
+     * @param certificatePath 证书路径
      * @return
      */
     public static boolean verifyCertificate(Date date, String certificatePath)
+        throws CertificateException, IOException
     {
-        boolean status = true;
-        try
-        {
-            // 取得证书
-            Certificate certificate = getCertificate(certificatePath);
-            // 验证证书是否过期或无效
-            status = verifyCertificate(date, certificate);
-        }
-        catch (Exception e)
-        {
-            status = false;
-        }
+        // 取得证书
+        Certificate certificate = getCertificate(certificatePath);
+        // 验证证书是否过期或无效
+        boolean status = verifyCertificate(date, certificate);
         return status;
     }
 
     /**
      * 验证证书是否过期或无效
      *
-     * @param date
-     * @param certificate
+     * @param date        时间
+     * @param certificate 证书
      * @return
      */
     private static boolean verifyCertificate(Date date, Certificate certificate)
@@ -255,14 +247,15 @@ public class CertificateClient
     /**
      * 签名
      *
-     * @param keyStorePath
-     * @param alias
-     * @param password
+     * @param plaintext    明文
+     * @param keyStorePath 密钥存储路径
+     * @param alias        别名
+     * @param password     密码
      * @return
-     * @throws Exception
      */
-    public static String sign(byte[] sign, String keyStorePath, String alias, String password)
-        throws Exception
+    public static String sign(byte[] plaintext, String keyStorePath, String alias, String password)
+        throws CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException,
+        UnrecoverableKeyException, InvalidKeyException, SignatureException
     {
         // 获得证书
         X509Certificate x509Certificate = (X509Certificate)getCertificate(keyStorePath, alias, password);
@@ -270,25 +263,24 @@ public class CertificateClient
         KeyStore ks = getKeyStore(keyStorePath, password);
         // 取得私钥
         PrivateKey privateKey = (PrivateKey)ks.getKey(alias, password.toCharArray());
-
         // 构建签名
         Signature signature = Signature.getInstance(x509Certificate.getSigAlgName());
         signature.initSign(privateKey);
-        signature.update(sign);
+        signature.update(plaintext);
         return Base64.encode(signature.sign());
     }
 
     /**
      * 验证签名
      *
-     * @param data
-     * @param sign
-     * @param certificatePath
+     * @param plaintext       明文
+     * @param sign            签名
+     * @param certificatePath 证书路径
      * @return
-     * @throws Exception
      */
-    public static boolean verify(byte[] data, String sign, String certificatePath)
-        throws Exception
+    public static boolean verify(byte[] plaintext, String sign, String certificatePath)
+        throws CertificateException, IOException, NoSuchAlgorithmException, InvalidKeyException, SignatureException,
+        Base64DecodingException
     {
         // 获得证书
         X509Certificate x509Certificate = (X509Certificate)getCertificate(certificatePath);
@@ -297,42 +289,37 @@ public class CertificateClient
         // 构建签名
         Signature signature = Signature.getInstance(x509Certificate.getSigAlgName());
         signature.initVerify(publicKey);
-        signature.update(data);
+        signature.update(plaintext);
         return signature.verify(Base64.decode(sign));
     }
 
     /**
      * 验证Certificate
      *
-     * @param keyStorePath
-     * @param alias
-     * @param password
+     * @param date         时间
+     * @param keyStorePath 密钥存储路径
+     * @param alias别名
+     * @param password     密码
      * @return
      */
     public static boolean verifyCertificate(Date date, String keyStorePath, String alias, String password)
+        throws CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException
     {
-        boolean status = true;
-        try
-        {
-            Certificate certificate = getCertificate(keyStorePath, alias, password);
-            status = verifyCertificate(date, certificate);
-        }
-        catch (Exception e)
-        {
-            status = false;
-        }
+        Certificate certificate = getCertificate(keyStorePath, alias, password);
+        boolean status = verifyCertificate(date, certificate);
         return status;
     }
 
     /**
      * 验证Certificate
      *
-     * @param keyStorePath
-     * @param alias
-     * @param password
+     * @param keyStorePath 密钥存储路径
+     * @param alias        别名
+     * @param password     密码
      * @return
      */
     public static boolean verifyCertificate(String keyStorePath, String alias, String password)
+        throws CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException
     {
         return verifyCertificate(new Date(), keyStorePath, alias, password);
     }

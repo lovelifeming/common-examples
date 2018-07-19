@@ -19,7 +19,7 @@ import java.util.Date;
  * @Date:Created in 2018/7/11.
  * @Modified By:
  */
-public class CertificateSSL
+public abstract class CertificateSSL
 {
     /**
      * Java密钥库(Java Key Store，JKS)KEY_STORE
@@ -39,10 +39,8 @@ public class CertificateSSL
      * @param alias        别名
      * @param password     密码
      * @return 私钥
-     * @throws Exception
      */
     private static PrivateKey getPrivateKey(String keyStorePath, String alias, String password)
-        throws Exception
     {
         KeyStore ks = getKeyStore(keyStorePath, password);
         PrivateKey key = (PrivateKey)ks.getKey(alias, password.toCharArray());
@@ -54,10 +52,8 @@ public class CertificateSSL
      *
      * @param certificatePath 证书路径
      * @return
-     * @throws Exception
      */
     private static PublicKey getPublicKey(String certificatePath)
-        throws Exception
     {
         Certificate certificate = getCertificate(certificatePath);
         PublicKey key = certificate.getPublicKey();
@@ -69,10 +65,8 @@ public class CertificateSSL
      *
      * @param certificatePath 证书路径
      * @return
-     * @throws Exception
      */
     private static Certificate getCertificate(String certificatePath)
-        throws Exception
     {
         CertificateFactory certificateFactory = CertificateFactory.getInstance(X509);
         FileInputStream in = new FileInputStream(certificatePath);
@@ -88,13 +82,11 @@ public class CertificateSSL
      * @param alias        别名
      * @param password     密码
      * @return
-     * @throws Exception
      */
-    private static CertificateClient getCertificate(String keyStorePath, String alias, String password)
-        throws Exception
+    private static Certificate getCertificate(String keyStorePath, String alias, String password)
     {
         KeyStore ks = getKeyStore(keyStorePath, password);
-        CertificateClient certificate = ks.getCertificate(alias);
+        Certificate certificate = ks.getCertificate(alias);
         return certificate;
     }
 
@@ -104,10 +96,8 @@ public class CertificateSSL
      * @param keyStorePath 密钥库存储路径
      * @param password     密码
      * @return
-     * @throws Exception
      */
     private static KeyStore getKeyStore(String keyStorePath, String password)
-        throws Exception
     {
         FileInputStream is = new FileInputStream(keyStorePath);
         KeyStore ks = KeyStore.getInstance(KEY_STORE);
@@ -124,10 +114,8 @@ public class CertificateSSL
      * @param alias        别名
      * @param password     密码
      * @return
-     * @throws Exception
      */
     public static byte[] encryptByPrivateKey(byte[] plaintext, String keyStorePath, String alias, String password)
-        throws Exception
     {
         // 取得私钥
         PrivateKey privateKey = getPrivateKey(keyStorePath, alias, password);
@@ -140,15 +128,13 @@ public class CertificateSSL
     /**
      * 私钥解密
      *
-     * @param ciphertext
-     * @param keyStorePath
-     * @param alias
-     * @param password
+     * @param ciphertext   密文
+     * @param keyStorePath 密钥库存储路径
+     * @param alias        别名
+     * @param password     密码
      * @return
-     * @throws Exception
      */
     public static byte[] decryptByPrivateKey(byte[] ciphertext, String keyStorePath, String alias, String password)
-        throws Exception
     {
         // 取得私钥
         PrivateKey privateKey = getPrivateKey(keyStorePath, alias, password);
@@ -161,32 +147,28 @@ public class CertificateSSL
     /**
      * 公钥加密
      *
-     * @param data
-     * @param certificatePath
+     * @param plaintext       明文
+     * @param certificatePath 证书路径
      * @return
-     * @throws Exception
      */
-    public static byte[] encryptByPublicKey(byte[] data, String certificatePath)
-        throws Exception
+    public static byte[] encryptByPublicKey(byte[] plaintext, String certificatePath)
     {
         // 取得公钥
         PublicKey publicKey = getPublicKey(certificatePath);
         // 对数据加密
         Cipher cipher = Cipher.getInstance(publicKey.getAlgorithm());
         cipher.init(Cipher.ENCRYPT_MODE, publicKey);
-        return cipher.doFinal(data);
+        return cipher.doFinal(plaintext);
     }
 
     /**
      * 公钥解密
      *
-     * @param data
-     * @param certificatePath
+     * @param ciphertext      密文
+     * @param certificatePath 证书路径
      * @return
-     * @throws Exception
      */
-    public static byte[] decryptByPublicKey(byte[] data, String certificatePath)
-        throws Exception
+    public static byte[] decryptByPublicKey(byte[] ciphertext, String certificatePath)
     {
         // 取得公钥
         PublicKey publicKey = getPublicKey(certificatePath);
@@ -199,7 +181,7 @@ public class CertificateSSL
     /**
      * 验证Certificate
      *
-     * @param certificatePath
+     * @param certificatePath 证书路径
      * @return
      */
     public static boolean verifyCertificate(String certificatePath)
@@ -210,60 +192,43 @@ public class CertificateSSL
     /**
      * 验证Certificate是否过期或无效
      *
-     * @param date
-     * @param certificatePath
+     * @param date            时间
+     * @param certificatePath 证书路径
      * @return
      */
     public static boolean verifyCertificate(Date date, String certificatePath)
     {
-        boolean status = true;
-        try
-        {
-            // 取得证书
-            CertificateClient certificate = getCertificate(certificatePath);
-            // 验证证书是否过期或无效
-            status = verifyCertificate(date, certificate);
-        }
-        catch (Exception e)
-        {
-            status = false;
-        }
+        // 取得证书
+        Certificate certificate = getCertificate(certificatePath);
+        // 验证证书是否过期或无效
+        boolean status = verifyCertificate(date, certificate);
         return status;
     }
 
     /**
      * 验证证书是否过期或无效
      *
-     * @param date
-     * @param certificate
+     * @param date        时间
+     * @param certificate 证书
      * @return
      */
-    private static boolean verifyCertificate(Date date, CertificateClient certificate)
+    private static boolean verifyCertificate(Date date, Certificate certificate)
     {
         boolean status = true;
-        try
-        {
-            X509Certificate x509Certificate = (X509Certificate)certificate;
-            x509Certificate.checkValidity(date);
-        }
-        catch (Exception e)
-        {
-            status = false;
-        }
+        X509Certificate x509Certificate = (X509Certificate)certificate;
+        x509Certificate.checkValidity(date);
         return status;
     }
 
     /**
      * 签名
      *
-     * @param keyStorePath
-     * @param alias
-     * @param password
+     * @param keyStorePath 密钥存储路径
+     * @param alias        别名
+     * @param password     密码
      * @return
-     * @throws Exception
      */
     public static String sign(byte[] sign, String keyStorePath, String alias, String password)
-        throws Exception
     {
         // 获得证书
         X509Certificate x509Certificate = (X509Certificate)getCertificate(keyStorePath, alias, password);
@@ -281,14 +246,12 @@ public class CertificateSSL
     /**
      * 验证签名
      *
-     * @param data
-     * @param sign
-     * @param certificatePath
+     * @param plaintext       明文
+     * @param sign            签名
+     * @param certificatePath 证书路径
      * @return
-     * @throws Exception
      */
-    public static boolean verify(byte[] data, String sign, String certificatePath)
-        throws Exception
+    public static boolean verify(byte[] plaintext, String sign, String certificatePath)
     {
         // 获得证书
         X509Certificate x509Certificate = (X509Certificate)getCertificate(certificatePath);
@@ -297,39 +260,32 @@ public class CertificateSSL
         // 构建签名
         Signature signature = Signature.getInstance(x509Certificate.getSigAlgName());
         signature.initVerify(publicKey);
-        signature.update(data);
+        signature.update(plaintext);
         return signature.verify(decryptBASE64(sign));
     }
 
     /**
-     * 验证Certificate
+     * 校验证书是否有效
      *
-     * @param keyStorePath
-     * @param alias
-     * @param password
+     * @param date         日期
+     * @param keyStorePath 密钥存储路径
+     * @param alias        别名
+     * @param password     密码
      * @return
      */
     public static boolean verifyCertificate(Date date, String keyStorePath, String alias, String password)
     {
-        boolean status = true;
-        try
-        {
-            CertificateClient certificate = getCertificate(keyStorePath, alias, password);
-            status = verifyCertificate(date, certificate);
-        }
-        catch (Exception e)
-        {
-            status = false;
-        }
+        Certificate certificate = getCertificate(keyStorePath, alias, password);
+        status = verifyCertificate(date, certificate);
         return status;
     }
 
     /**
      * 验证Certificate
      *
-     * @param keyStorePath
-     * @param alias
-     * @param password
+     * @param keyStorePath 密钥存储路径
+     * @param alias        别名
+     * @param password     密码
      * @return
      */
     public static boolean verifyCertificate(String keyStorePath, String alias, String password)
@@ -344,16 +300,13 @@ public class CertificateSSL
      * @param keyStorePath      密钥库路径
      * @param trustKeyStorePath 信任库路径
      * @return
-     * @throws Exception
      */
     private static SSLSocketFactory getSSLSocketFactory(String password, String keyStorePath, String trustKeyStorePath)
-        throws Exception
     {
         // 初始化密钥库
         KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(SunX509);
         KeyStore keyStore = getKeyStore(keyStorePath, password);
         keyManagerFactory.init(keyStore, password.toCharArray());
-
         // 初始化信任库
         TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(SunX509);
         KeyStore trustkeyStore = getKeyStore(trustKeyStorePath, password);
@@ -372,11 +325,9 @@ public class CertificateSSL
      * @param password          密码
      * @param keyStorePath      密钥库路径
      * @param trustKeyStorePath 信任库路径
-     * @throws Exception
      */
     public static void configSSLSocketFactory(HttpsURLConnection conn, String password, String keyStorePath,
                                               String trustKeyStorePath)
-        throws Exception
     {
         conn.setSSLSocketFactory(getSSLSocketFactory(password, keyStorePath, trustKeyStorePath));
     }

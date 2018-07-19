@@ -12,7 +12,7 @@ import java.security.MessageDigest;
 
 
 /**
- * BASE64加密解密,自定义非运算加密,
+ * SHA加解密,HMAC加解密,BASE64加密解密,自定义非运算加密,
  *
  * @Author: zengsm.
  * @Description:
@@ -93,14 +93,14 @@ public class EncryptionUtils
     /**
      * HMAC加密
      *
-     * @param bytes 明文字节
+     * @param plaintext 明文字节
      * @return
      * @throws Exception
      */
-    public static byte[] encryptionHMAC(byte[] bytes)
+    public static byte[] encryptionHMAC(byte[] plaintext)
         throws Exception
     {
-        return encryptionHMAC(bytes, initHMacKey());
+        return encryptionHMAC(plaintext, initHMacKey());
     }
 
     /**
@@ -218,6 +218,12 @@ public class EncryptionUtils
         return nonOperation(ciphertext);
     }
 
+    /**
+     * 采用二进制非运算加解密
+     *
+     * @param plaintext
+     * @return
+     */
     private static String nonOperation(String plaintext)
     {
         char[] ch = plaintext.toCharArray();

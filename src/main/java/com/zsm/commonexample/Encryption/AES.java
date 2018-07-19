@@ -109,7 +109,6 @@ public class AES
             Cipher cipher = Cipher.getInstance(AES);
             // 7.初始化密码器，第一个参数为加密(ENCRYPT_MODE)或者解密(DECRYPT_MODE)操作，第二个参数为使用的KEY
             cipher.init(Cipher.DECRYPT_MODE, keySpec);
-
             // 8.将加密并编码后的内容解码成字节数组
             byte[] byteContent = new BASE64Decoder().decodeBuffer(ciphertext);
             byte[] byteDecode = cipher.doFinal(byteContent);
