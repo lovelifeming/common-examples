@@ -23,7 +23,8 @@ import java.util.Map;
  * @Date:Created in 2018/7/3.
  * @Modified By:
  */
-public class RSA extends BaseSA
+@SuppressWarnings("all")
+public class RSA extends SABase
 {
     private static final String RSA = "RSA";
 

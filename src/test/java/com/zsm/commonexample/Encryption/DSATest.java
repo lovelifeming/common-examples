@@ -1,8 +1,9 @@
 package com.zsm.commonexample.Encryption;
 
+import org.junit.Assert;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import java.util.Map;
 
 
 /**
@@ -13,22 +14,20 @@ import static org.junit.Assert.*;
  */
 public class DSATest
 {
+    private String plaintext = "DSA sign and verify test.";
+
     @Test
     public void sign()
         throws Exception
     {
-    }
+        Map<String, byte[]> key = DSA.generatePublicKeyAndPrivateKey();
+        byte[] sign = DSA.sign(plaintext.getBytes(), key.get("privateKey"));
+        boolean verify = DSA.verify(plaintext.getBytes(), key.get("publicKey"), sign);
+        Assert.assertTrue(verify);
 
-    @Test
-    public void verify()
-        throws Exception
-    {
+        Map<String, String> stringKey = DSA.generatePublicKeyAndPrivateKeyHex();
+        String sign1 = DSA.sign(plaintext, stringKey.get("privateKey"));
+        boolean verify1 = DSA.verify(plaintext, stringKey.get("publicKey"), sign1);
+        Assert.assertTrue(verify1);
     }
-
-    @Test
-    public void generatePublicKeyAndPrivateKey()
-        throws Exception
-    {
-    }
-
 }

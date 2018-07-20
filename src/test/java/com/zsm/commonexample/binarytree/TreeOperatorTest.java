@@ -2,7 +2,6 @@ package com.zsm.commonexample.binarytree;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 
@@ -12,7 +11,6 @@ import org.junit.Test;
  * @Date:Created in 2017/12/7 17:00.
  * @Modified By:
  */
-@Ignore
 public class TreeOperatorTest
 {
     private TreeNode<Character> treeNode;

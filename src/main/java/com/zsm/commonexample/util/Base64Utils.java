@@ -16,7 +16,7 @@ import java.io.*;
  * @Date:Created in 2018/4/23.
  * @Modified By:
  */
-@SuppressWarnings("warning")
+@SuppressWarnings("all")
 public class Base64Utils
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(Base64Utils.class);

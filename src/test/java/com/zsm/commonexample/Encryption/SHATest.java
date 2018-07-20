@@ -11,20 +11,22 @@ import org.junit.Test;
  * @Date:Created in 2018/7/17.
  * @Modified By:
  */
+@SuppressWarnings("all")
 public class SHATest
 {
     @Test
     public void encryptBySHA()
         throws Exception
     {
-        String key = "sha_test";
-        String sha = SHA.encryptBySHA(key);
-        Assert.assertEquals("A9DD2922D7DC0E9E2D973095674AB33DA29DA3E8", sha);
+        String plaintext = "SHA encryption and validate method test.";
+        String key = "B095E8CFFF21090AB304F6DB3E00572464382A6D";
+        String sha = SHA.encryptBySHA(plaintext);
+        Assert.assertEquals(key, sha);
 
-        byte[] sha1 = SHA.encryptionSHA(key.getBytes());
-        Assert.assertEquals("A9DD2922D7DC0E9E2D973095674AB33DA29DA3E8", HexBin.encode(sha1));
+        byte[] sha1 = SHA.encryptionSHA(plaintext.getBytes());
+        Assert.assertEquals(key, HexBin.encode(sha1));
 
-        boolean flag = SHA.validate(key, sha);
+        boolean flag = SHA.validate(plaintext, sha);
         Assert.assertTrue(flag);
     }
 }

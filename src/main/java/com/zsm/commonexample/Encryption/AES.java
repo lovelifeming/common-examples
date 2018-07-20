@@ -18,6 +18,7 @@ import java.security.SecureRandom;
  * @Date:Created in 2018/7/2.
  * @Modified By:
  */
+@SuppressWarnings("all")
 public class AES
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(AES.class);

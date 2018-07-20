@@ -17,7 +17,8 @@ import java.util.Map;
  * @Date:Created in 2018/7/4.
  * @Modified By:
  */
-public abstract class BaseSA
+@SuppressWarnings("all")
+public abstract class SABase
 {
     /**
      * 公钥

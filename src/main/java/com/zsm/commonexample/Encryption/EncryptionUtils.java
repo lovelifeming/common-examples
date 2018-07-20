@@ -19,6 +19,7 @@ import java.security.MessageDigest;
  * @Date:Created in 2018/7/2.
  * @Modified By:
  */
+@SuppressWarnings("all")
 public class EncryptionUtils
 {
     /**

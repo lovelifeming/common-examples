@@ -1,8 +1,9 @@
 package com.zsm.commonexample.Encryption;
 
+import org.junit.Assert;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import java.util.Map;
 
 
 /**
@@ -13,100 +14,34 @@ import static org.junit.Assert.*;
  */
 public class RSATest
 {
+    private String plaintext = "RSA sign and verify test.";
+
     @Test
     public void sign()
         throws Exception
     {
+        Map<String, byte[]> key = RSA.generatePublicKeyAndPrivateKey();
+        byte[] sign = RSA.sign(plaintext.getBytes(), key.get("privateKey"));
+        boolean verify = RSA.verify(plaintext.getBytes(), key.get("publicKey"), sign);
+        Assert.assertTrue(verify);
+
+        Map<String, String> stringKey = RSA.generatePublicKeyAndPrivateKeyHex();
+        String sign1 = RSA.sign(plaintext, stringKey.get("privateKey"));
+        boolean verify1 = RSA.verify(plaintext, stringKey.get("publicKey"), sign1);
+        Assert.assertTrue(verify1);
     }
 
     @Test
-    public void sign1()
+    public void encrypt()
         throws Exception
     {
-    }
+        Map<String, String> stringKey = RSA.generatePublicKeyAndPrivateKeyHex();
+        String encrypt = RSA.encryptByPrivateKey(plaintext, stringKey.get("privateKey"));
+        String decrypt = RSA.decryptByPublicKey(encrypt, stringKey.get("publicKey"));
+        Assert.assertEquals(plaintext, decrypt);
 
-    @Test
-    public void verify()
-        throws Exception
-    {
+        String encrypt1 = RSA.encryptByPublicKey(plaintext, stringKey.get("publicKey"));
+        String decrypt1 = RSA.decryptByPrivateKey(encrypt1, stringKey.get("privateKey"));
+        Assert.assertEquals(plaintext, decrypt1);
     }
-
-    @Test
-    public void verify1()
-        throws Exception
-    {
-    }
-
-    @Test
-    public void generatePublicKeyAndPrivateKeyHex()
-        throws Exception
-    {
-    }
-
-    @Test
-    public void generatePublicKeyAndPrivateKey()
-        throws Exception
-    {
-    }
-
-    @Test
-    public void generatePublicKeyAndPrivateKey1()
-        throws Exception
-    {
-    }
-
-    @Test
-    public void generateKeyPair()
-        throws Exception
-    {
-    }
-
-    @Test
-    public void encryptByPublicKey()
-        throws Exception
-    {
-    }
-
-    @Test
-    public void encryptByPublicKey1()
-        throws Exception
-    {
-    }
-
-    @Test
-    public void encryptByPrivateKey()
-        throws Exception
-    {
-    }
-
-    @Test
-    public void encryptByPrivateKey1()
-        throws Exception
-    {
-    }
-
-    @Test
-    public void decryptByPrivateKey()
-        throws Exception
-    {
-    }
-
-    @Test
-    public void decryptByPrivateKey1()
-        throws Exception
-    {
-    }
-
-    @Test
-    public void decryptByPublicKey()
-        throws Exception
-    {
-    }
-
-    @Test
-    public void decryptByPublicKey1()
-        throws Exception
-    {
-    }
-
 }

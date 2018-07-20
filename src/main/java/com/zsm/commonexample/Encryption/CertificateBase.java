@@ -1,7 +1,6 @@
 package com.zsm.commonexample.Encryption;
 
-import com.sun.org.apache.xml.internal.security.exceptions.Base64DecodingException;
-import com.sun.org.apache.xml.internal.security.utils.Base64;
+import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -25,7 +24,8 @@ import java.util.Date;
  * @Date:Created in 2018/7/10.
  * @Modified By:
  */
-public abstract class CertificateClient
+@SuppressWarnings("all")
+public abstract class CertificateBase
 {
     /**
      * Java密钥库(Java Key Store，JKS)KEY_STORE
@@ -42,7 +42,7 @@ public abstract class CertificateClient
      * @param password     密码
      * @return
      */
-    private static PrivateKey getPrivateKey(String keyStorePath, String alias, String password)
+    protected static PrivateKey getPrivateKey(String keyStorePath, String alias, String password)
         throws CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException, UnrecoverableKeyException
     {
         KeyStore ks = getKeyStore(keyStorePath, password);
@@ -56,7 +56,7 @@ public abstract class CertificateClient
      * @param certificatePath 证书路径
      * @return
      */
-    private static PublicKey getPublicKey(String certificatePath)
+    protected static PublicKey getPublicKey(String certificatePath)
         throws CertificateException, IOException
     {
         Certificate certificate = getCertificate(certificatePath);
@@ -70,7 +70,7 @@ public abstract class CertificateClient
      * @param certificatePath 证书路径
      * @return
      */
-    private static Certificate getCertificate(String certificatePath)
+    protected static Certificate getCertificate(String certificatePath)
         throws CertificateException, IOException
     {
         CertificateFactory certificateFactory = CertificateFactory.getInstance(X509);
@@ -88,7 +88,7 @@ public abstract class CertificateClient
      * @param password     密码
      * @return
      */
-    private static Certificate getCertificate(String keyStorePath, String alias, String password)
+    protected static Certificate getCertificate(String keyStorePath, String alias, String password)
         throws CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException
     {
         KeyStore ks = getKeyStore(keyStorePath, password);
@@ -103,7 +103,7 @@ public abstract class CertificateClient
      * @param password     密码
      * @return
      */
-    private static KeyStore getKeyStore(String keyStorePath, String password)
+    protected static KeyStore getKeyStore(String keyStorePath, String password)
         throws IOException, KeyStoreException, CertificateException, NoSuchAlgorithmException
     {
         FileInputStream is = new FileInputStream(keyStorePath);
@@ -229,7 +229,7 @@ public abstract class CertificateClient
      * @param certificate 证书
      * @return
      */
-    private static boolean verifyCertificate(Date date, Certificate certificate)
+    protected static boolean verifyCertificate(Date date, Certificate certificate)
     {
         boolean status = true;
         try
@@ -279,8 +279,7 @@ public abstract class CertificateClient
      * @return
      */
     public static boolean verify(byte[] plaintext, String sign, String certificatePath)
-        throws CertificateException, IOException, NoSuchAlgorithmException, InvalidKeyException, SignatureException,
-        Base64DecodingException
+        throws CertificateException, IOException, NoSuchAlgorithmException, InvalidKeyException, SignatureException
     {
         // 获得证书
         X509Certificate x509Certificate = (X509Certificate)getCertificate(certificatePath);
@@ -298,7 +297,7 @@ public abstract class CertificateClient
      *
      * @param date         时间
      * @param keyStorePath 密钥存储路径
-     * @param alias别名
+     * @param alias        别名
      * @param password     密码
      * @return
      */
@@ -323,5 +322,4 @@ public abstract class CertificateClient
     {
         return verifyCertificate(new Date(), keyStorePath, alias, password);
     }
-
 }
