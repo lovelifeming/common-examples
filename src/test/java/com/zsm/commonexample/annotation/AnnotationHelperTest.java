@@ -16,24 +16,24 @@ public class AnnotationHelperTest
 
     @Test
     public void findClassAnnotation()
-        throws Exception
+        throws ClassNotFoundException
     {
-        LoginCheck lc = (LoginCheck)AnnotationHelper.findClassAnnotation(LOGIN_NAME, LoginCheck.class);
+        LoginCheck loginCheck = (LoginCheck)AnnotationHelper.findClassAnnotation(LOGIN_NAME, LoginCheck.class);
+        LoginCheck loginCheck1 = AnnotationHelper.findClassAnnotation(Login.class, LoginCheck.class);
 
-        LoginCheck loginCheck = AnnotationHelper.findClassAnnotation(Login.class, LoginCheck.class);
-        showCheck(lc);
         showCheck(loginCheck);
-        Assert.assertEquals(lc.isLogin(), false);
+        showCheck(loginCheck1);
         Assert.assertEquals(loginCheck.isLogin(), false);
+        Assert.assertEquals(loginCheck1.isLogin(), false);
     }
 
     @Test
     public void findMethodAnnotation()
-        throws Exception
+        throws ClassNotFoundException
     {
         LoginCheck[] loginCheck = (LoginCheck[])AnnotationHelper.findMethodAnnotation(LOGIN_NAME, LoginCheck.class);
         showCheck(loginCheck);
-        Assert.assertEquals(loginCheck[0].userType(), "salaryAdmin");
+        Assert.assertEquals(2, loginCheck.length);
     }
 
     @Test
@@ -41,7 +41,7 @@ public class AnnotationHelperTest
     {
         LoginCheck[] loginCheck = AnnotationHelper.findMethodAnnotationByExist(Login.class, LoginCheck.class);
         showCheck(loginCheck);
-        Assert.assertEquals(loginCheck[0].userType(), "salaryAdmin");
+        Assert.assertEquals(2, loginCheck.length);
     }
 
     @Test
@@ -49,7 +49,7 @@ public class AnnotationHelperTest
     {
         LoginCheck[] loginCheck = AnnotationHelper.findMethodAnnotationByIsInstance(Login.class, LoginCheck.class);
         showCheck(loginCheck);
-        Assert.assertEquals(loginCheck[1].userType(), "admin");
+        Assert.assertEquals(2, loginCheck.length);
     }
 
     public static void showCheck(LoginCheck... loginChecks)
