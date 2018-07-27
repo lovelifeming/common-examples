@@ -8,13 +8,15 @@ package com.zsm.commonexample.util;
  */
 public class StringUtils
 {
+
+
     /**
      * 判断字符串是否为null，如果为null返回 "" 空字符串，否则返回原字符串
      *
      * @param str
      * @return
      */
-    public static String replaceNullString(String str)
+    public static String validateNullString(String str)
     {
         if (str == null)
         {

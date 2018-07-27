@@ -11,7 +11,7 @@ package com.zsm.commonexample.framework;
 public class Singleton
 {
     //region 懒汉式单例
-    private static Singleton singleton;
+    private volatile static Singleton singleton;
 
     private Singleton()
     {

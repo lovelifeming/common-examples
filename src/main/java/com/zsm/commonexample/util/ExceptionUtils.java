@@ -21,7 +21,6 @@ public class ExceptionUtils
      */
     public static String getStackTrace(Throwable t)
     {
-
         try (StringWriter sw = new StringWriter(); PrintWriter ps = new PrintWriter(sw))
         {
             t.printStackTrace(ps);
@@ -30,7 +29,7 @@ public class ExceptionUtils
         catch (IOException e)
         {
             e.printStackTrace();
+            return "getStackTrace Exception:" + e.getMessage();
         }
-        return null;
     }
 }

@@ -18,10 +18,15 @@ import java.util.List;
  */
 public class WordUtils
 {
-
-    public static String readerWord(String filePath)
+    /**
+     * 读取Word文档
+     *
+     * @param filePath 文件路径
+     * @return
+     */
+    public static String[] readerWord(String filePath)
     {
-        StringBuilder sb = new StringBuilder();
+        String[] result = null;
         try
         {
             String suffix = filePath.substring(filePath.lastIndexOf("."));
@@ -29,18 +34,17 @@ public class WordUtils
             {
                 WordExtractor extractor = new WordExtractor(new FileInputStream(new File(filePath)));
                 String[] text = extractor.getParagraphText();
-                for (int i = 0; i < text.length; i++)
-                {
-                    sb.append(text[i]);
-                }
+                result = text;
             }
             else
             {
                 XWPFDocument document = new XWPFDocument(new FileInputStream(new File(filePath)));
                 List<XWPFParagraph> paragraphs = document.getParagraphs();
-                for (int i = 0; i < paragraphs.size(); i++)
+                int size = paragraphs.size();
+                result = new String[size];
+                for (int i = 0; i < size; i++)
                 {
-                    sb.append(paragraphs.get(i));
+                    result[i] = String.valueOf(paragraphs.get(i));
                 }
             }
         }
@@ -48,6 +52,6 @@ public class WordUtils
         {
             e.printStackTrace();
         }
-        return sb.toString();
+        return result;
     }
 }

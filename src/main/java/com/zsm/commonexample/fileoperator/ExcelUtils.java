@@ -22,7 +22,13 @@ import java.util.List;
  */
 public class ExcelUtils
 {
-
+    /**
+     * 读取Excel文件，返回二维数组
+     *
+     * @param filePath  文件路径
+     * @param sheetName 页签名
+     * @return
+     */
     public static List<List<String>> readExcel(String filePath, String sheetName)
     {
         String suffix = filePath.substring(filePath.lastIndexOf("."));
