@@ -1,5 +1,6 @@
 package com.zsm.commonexample.util;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -20,16 +21,16 @@ public class ExceptionUtils
      */
     public static String getStackTrace(Throwable t)
     {
-        StringWriter sw = new StringWriter();
-        PrintWriter ps = new PrintWriter(sw);
-        try
+
+        try (StringWriter sw = new StringWriter(); PrintWriter ps = new PrintWriter(sw))
         {
             t.printStackTrace(ps);
             return sw.toString();
         }
-        finally
+        catch (IOException e)
         {
-            ps.close();
+            e.printStackTrace();
         }
+        return null;
     }
 }

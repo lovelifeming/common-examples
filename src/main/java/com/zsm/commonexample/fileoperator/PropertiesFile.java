@@ -46,12 +46,12 @@ public class PropertiesFile
         catch (FileNotFoundException e)
         {
             e.printStackTrace();
-            LOGGER.info("PropertiesFile-->getPropertyByKey-->" + e.getStackTrace());
+            LOGGER.info("PropertiesFile-->getPropertyByKey-->" + e.getMessage());
         }
         catch (IOException e)
         {
             e.printStackTrace();
-            LOGGER.info("PropertiesFile-->getPropertyByKey-->" + e.getStackTrace());
+            LOGGER.info("PropertiesFile-->getPropertyByKey-->" + e.getMessage());
         }
         finally
         {
@@ -86,12 +86,12 @@ public class PropertiesFile
         catch (FileNotFoundException e)
         {
             e.printStackTrace();
-            LOGGER.info("PropertiesFile-->setProperty-->" + e.getStackTrace());
+            LOGGER.info("PropertiesFile-->setProperty-->" + e.getMessage());
         }
         catch (IOException e)
         {
             e.printStackTrace();
-            LOGGER.info("PropertiesFile-->setProperty-->" + e.getStackTrace());
+            LOGGER.info("PropertiesFile-->setProperty-->" + e.getMessage());
         }
         finally
         {
@@ -126,12 +126,12 @@ public class PropertiesFile
         catch (FileNotFoundException e)
         {
             e.printStackTrace();
-            LOGGER.info("PropertiesFile-->getPropertyMap-->" + e.getStackTrace());
+            LOGGER.info("PropertiesFile-->getPropertyMap-->" + e.getMessage());
         }
         catch (IOException e)
         {
             e.printStackTrace();
-            LOGGER.info("PropertiesFile-->getPropertyMap-->" + e.getStackTrace());
+            LOGGER.info("PropertiesFile-->getPropertyMap-->" + e.getMessage());
         }
         return valueMap;
     }

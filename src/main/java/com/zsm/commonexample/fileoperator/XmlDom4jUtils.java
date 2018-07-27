@@ -171,7 +171,7 @@ public class XmlDom4jUtils
      *
      * @param filePath
      */
-    public static void readXml(String filePath)
+    public static org.w3c.dom.Document readXml(String filePath)
     {
         try
         {
@@ -204,11 +204,14 @@ public class XmlDom4jUtils
                 Node firstNode = node.getFirstChild();
                 NodeList childs = node.getChildNodes();
             }
+            document.normalize();
+            return document;
         }
         catch (Exception e)
         {
             LOGGER.error(e.getMessage());
             e.printStackTrace();
         }
+        return null;
     }
 }

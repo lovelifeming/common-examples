@@ -18,7 +18,6 @@ import java.net.*;
 
 
 /**
- *
  * @Author: zengsm.
  * @Description:
  * @Date:Created in 2017/11/8 10:01.
@@ -55,9 +54,13 @@ public class HttpPostGetRequest
             conn.setInstanceFollowRedirects(true);
             //设置连接超时为5秒
             conn.setConnectTimeout(5000);
-            //允许输入输出
+            //发送POST请求必须设置允许输入输出都为true
             conn.setDoInput(true);
             conn.setDoOutput(true);
+            // 设置通用的请求属性
+            conn.setRequestProperty("accept", "*/*");
+            conn.setRequestProperty("connection", "Keep-Alive");
+            conn.setRequestProperty("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
             //4.发送POST请求
             conn.connect();
             //输出流写入要发送的数据
@@ -117,6 +120,12 @@ public class HttpPostGetRequest
     {
         StringBuilder sb = new StringBuilder();
         //1.创建URL对象，url是服务器API
+        //创建GET方式请求url
+        if (null != params)
+        {
+            url = url + "?" + URLEncoder.encode(params);
+        }
+
         URL url1 = new URL(url);
         //2.调用URL对象的openConnection()来获取HttpURLConnection对象实例
         HttpURLConnection conn = (HttpURLConnection)url1.openConnection();
@@ -124,6 +133,10 @@ public class HttpPostGetRequest
         conn.setRequestMethod("GET");
         //4.设置连接超时为5秒
         conn.setConnectTimeout(5000);
+        // 设置通用的请求属性
+        conn.setRequestProperty("accept", "*/*");
+        conn.setRequestProperty("connection", "Keep-Alive");
+        conn.setRequestProperty("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
         //5.服务器返回响应，先对响应码判断
         if (conn.getResponseCode() == 200)
         {
@@ -312,5 +325,5 @@ public class HttpPostGetRequest
         }
         return result;
     }
-
+    
 }

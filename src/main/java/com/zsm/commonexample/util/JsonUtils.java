@@ -1,11 +1,15 @@
 package com.zsm.commonexample.util;
 
+import net.sf.json.JSON;
 import net.sf.json.JSONObject;
+import net.sf.json.JSONSerializer;
+import net.sf.json.xml.XMLSerializer;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.type.CollectionType;
 import org.codehaus.jackson.map.type.MapType;
 import org.codehaus.jackson.map.type.TypeFactory;
 import org.codehaus.jackson.type.JavaType;
+import org.w3c.dom.Document;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -183,4 +187,38 @@ public class JsonUtils
         return map;
     }
 
+    /**
+     * 将xml字符串转换为JSON字符串
+     *
+     * @param xmlString xml字符串
+     * @return
+     */
+    public static String xmlToJson(String xmlString)
+    {
+        XMLSerializer serializer = new XMLSerializer();
+        JSON json = serializer.read(xmlString);
+        return json.toString(1);
+    }
+
+    /**
+     * 将xmlDocument转换为JSON对象
+     *
+     * @param document document对象
+     * @return
+     */
+    public static String xmlToJson(Document document)
+    {
+        return xmlToJson(document.toString());
+    }
+
+    /**
+     * 将JSON(数组)字符串转换成XML字符串
+     *
+     * @param jsonString
+     * @return
+     */
+    public static String jsonToXml(String jsonString)
+    {
+        return new XMLSerializer().write(JSONSerializer.toJSON(jsonString));
+    }
 }

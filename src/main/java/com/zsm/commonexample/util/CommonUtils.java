@@ -41,7 +41,7 @@ public class CommonUtils
             catch (IOException e)
             {
                 e.printStackTrace();
-                System.out.println("FileUtils-->closeStream-->" + e.getStackTrace());
+                System.out.println("FileUtils-->closeStream-->" + e.getMessage());
             }
         }
     }
