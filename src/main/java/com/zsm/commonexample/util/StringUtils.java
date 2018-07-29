@@ -1,5 +1,11 @@
 package com.zsm.commonexample.util;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
+import java.util.regex.Pattern;
+
+
 /**
  * @Author: zsm.
  * @Description:
@@ -9,6 +15,69 @@ package com.zsm.commonexample.util;
 public class StringUtils
 {
 
+    /**
+     * 首字母转小写
+     *
+     * @param str
+     * @return
+     */
+    public static String toLowerCaseInitial(String str)
+    {
+        if (Character.isLowerCase(str.charAt(0)))
+        {
+            return str;
+        }
+        else
+        {
+            return new StringBuilder(Character.toLowerCase(str.charAt(0))).append(str.substring(1)).toString();
+        }
+    }
+
+    /**
+     * 首字母转大写
+     *
+     * @param str
+     * @return
+     */
+    public static String toUpperCaseInitial(String str)
+    {
+        if (Character.isUpperCase(str.charAt(0)))
+        {
+            return str;
+        }
+        else
+        {
+            return new StringBuilder(Character.toUpperCase(str.charAt(0))).append(str.substring(1)).toString();
+        }
+    }
+
+    public static String appendTabAndWrap(String source, int tabNum, boolean wrap)
+    {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < tabNum; i++)
+        {
+            sb.append("\t");
+        }
+        sb.append(source);
+        if (wrap)
+        {
+            sb.append(FileUtils.LINE_SEPARATOR);
+        }
+        return sb.toString();
+    }
+
+    /**
+     * 判断字符串里面是否包含中文
+     *
+     * @param str
+     * @return
+     */
+    public static boolean haseChinese(String str)
+    {
+        String regexChinese = "[\u4e00-\u9fa5]";
+        Pattern pattern = Pattern.compile(regexChinese);
+        return pattern.matcher(str).find();
+    }
 
     /**
      * 判断字符串是否为null，如果为null返回 "" 空字符串，否则返回原字符串
@@ -16,7 +85,7 @@ public class StringUtils
      * @param str
      * @return
      */
-    public static String validateNullString(String str)
+    public static String isNull(String str)
     {
         if (str == null)
         {
@@ -26,6 +95,17 @@ public class StringUtils
         {
             return str;
         }
+    }
+
+    /**
+     * 判断字符串是否为null或者为空。
+     *
+     * @param str
+     * @return
+     */
+    public static boolean isEmpty(String str)
+    {
+        return str == null || str.length() == 0;
     }
 
     /**
@@ -97,5 +177,23 @@ public class StringUtils
         ch[first] = ch[last];
         ch[last] = temp;
         return ch;
+    }
+
+    /**
+     * 切分字符串，最后组成list集合
+     *
+     * @param str        字符串
+     * @param delimiters 分隔符
+     * @return
+     */
+    public static List<String> convertList(String str, String delimiters)
+    {
+        StringTokenizer tokenizer = new StringTokenizer(str, delimiters);
+        List<String> list = new ArrayList<>();
+        while (tokenizer.hasMoreTokens())
+        {
+            list.add(tokenizer.nextToken());
+        }
+        return list;
     }
 }
