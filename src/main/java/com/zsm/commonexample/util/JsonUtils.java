@@ -1,6 +1,7 @@
 package com.zsm.commonexample.util;
 
 import net.sf.json.JSON;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
 import net.sf.json.xml.XMLSerializer;
@@ -12,6 +13,7 @@ import org.codehaus.jackson.type.JavaType;
 import org.w3c.dom.Document;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -220,5 +222,19 @@ public class JsonUtils
     public static String jsonToXml(String jsonString)
     {
         return new XMLSerializer().write(JSONSerializer.toJSON(jsonString));
+    }
+
+    /**
+     * 将JSONArray字符串转换为数组
+     *
+     * @param source JSON 数组字符串
+     * @return
+     */
+    public static <T> T[] convertToArray(Class<?> clzss, String source)
+    {
+        JSONArray jsonArray = JSONArray.fromObject(source);
+        T[] arr = (T[])Array.newInstance(clzss, jsonArray.size());
+        jsonArray.toArray(arr);
+        return arr;
     }
 }
