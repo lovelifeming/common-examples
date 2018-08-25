@@ -4,6 +4,9 @@ import com.zsm.commonexample.util.CommonUtils;
 import com.zsm.commonexample.util.FileUtils;
 
 import java.io.*;
+import java.nio.ByteBuffer;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -241,4 +244,96 @@ public class FileOperatorUtils
         sis.close();
         fos.close();
     }
+
+    //region 读取大文件
+
+    /**
+     * 文件流边读边用，使用Buffered文件流的 read() 方法每次读取指定长度的数据到内存中
+     *
+     * @param filePath
+     * @param handler
+     * @throws IOException
+     */
+    public static void readBigFile(String filePath, Object handler)
+        throws IOException
+    {
+        BufferedInputStream stream = new BufferedInputStream(new FileInputStream(filePath), 8192);
+        byte[] bytes = new byte[8192];
+        int len = -1;
+        while ((len = stream.read(bytes)) != -1)
+        {
+            //TODO  handler bytes
+        }
+        stream.close();
+    }
+
+    /**
+     * 对大文件建立 NIO 的 FileChannel，每次调用 read() 会先将文件数据读取到已分配固定长度的 java.nio.ByteBuffer 中，
+     * 接着从中获取读取的数据，将数据转存到数组操作。
+     *
+     * @param filePath
+     * @param handler
+     * @throws IOException
+     */
+    public static void readBigFileByNIO(String filePath, Object handler)
+        throws IOException
+    {
+        FileInputStream stream = new FileInputStream(filePath);
+        ByteBuffer buffer = ByteBuffer.allocate(65535);
+        FileChannel channel = stream.getChannel();
+        int len = -1;
+        while ((len = channel.read(buffer)) != -1)
+        {
+            byte[] bytes = new byte[len];
+            buffer.flip();
+            buffer.get(bytes);
+            buffer.clear();
+
+            //TODO handler bytes
+        }
+        buffer.clear();
+        channel.close();
+        stream.close();
+    }
+
+    /**
+     * 内存文件映射，就是把文件内容映射到虚拟内存的一块区域中，从而可以直接操作内存当中的数据而无需每次都通过 I/O 去物理硬盘读取文件
+     *
+     * @param filePath
+     * @param handler
+     * @throws IOException
+     */
+    public static void readBigFileByMapper(String filePath, Object handler)
+        throws IOException
+    {
+        FileInputStream stream = new FileInputStream(filePath);
+        FileChannel channel = stream.getChannel();
+        MappedByteBuffer map = channel.map(FileChannel.MapMode.READ_ONLY, 0, channel.size());
+        boolean end = false;
+        do
+        {
+            int limit = map.limit();
+            int position = map.position();
+            if (limit <= position)
+            {
+                end = true;
+            }
+            int maxSize = 2048;
+            if (limit - position < maxSize)
+            {
+                maxSize = limit - position;
+            }
+            byte[] bytes = new byte[maxSize];
+            map.get(bytes);
+
+            //TODO  handler  bytes
+        }
+        while (!end);
+        map.clear();
+        channel.close();
+        stream.close();
+    }
+
+    //endregion
+
 }
