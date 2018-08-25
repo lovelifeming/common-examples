@@ -1,5 +1,6 @@
 package com.zsm.commonexample.thread;
 
+import java.util.concurrent.Exchanger;
 import java.util.concurrent.Semaphore;
 
 
@@ -16,7 +17,7 @@ public class ConcurrentSCCDemo
     /**
      * permits 初始化信号量，控制并发数。 fair 公平竞争资源 true为公平，false为不公平
      */
-    private Semaphore semaphore = new Semaphore(3, true);
+    private static Semaphore semaphore = new Semaphore(3, true);
 
     public void semaphoretest()
     {
@@ -26,7 +27,7 @@ public class ConcurrentSCCDemo
         }
     }
 
-    private void semaphore()
+    private static void semaphore()
     {
         try
         {
