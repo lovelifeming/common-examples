@@ -1,7 +1,9 @@
 package com.zsm.commonexample.thread;
 
 import java.util.Random;
+import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.Semaphore;
 
 
@@ -45,7 +47,6 @@ public class ConcurrentSCCDemo
             e.printStackTrace();
         }
         System.out.println(Thread.currentThread().getName() + " enter and get the lock!");
-
         try
         {
             Thread.sleep(5000);
@@ -104,7 +105,55 @@ public class ConcurrentSCCDemo
     }
     //endregion
 
-    //region Thread join
+    //region CyclicBarrier 一般用于一组线程互相等待至某个状态，然后这一组线程再同时执行。
+    public static void cyclicBarrier()
+    {
+        System.out.println(Thread.currentThread().getName() + " enter");
+        int num = 5;
+        CyclicBarrier cyclicBarrier = new CyclicBarrier(num, () -> {
+            System.out.println(Thread.currentThread().getName() + " cyclicBarrier");
+        });
+        for (int i = 0; i < num; i++)
+        {
+            new writer(cyclicBarrier, "Thread" + i).start();
+        }
+        System.out.println(Thread.currentThread().getName() + " end");
+    }
+
+    public static class writer extends Thread
+    {
+        private CyclicBarrier cyclicBarrier;
+
+        public writer(CyclicBarrier cyclicBarrier, String threadName)
+        {
+            this.cyclicBarrier = cyclicBarrier;
+            this.setName(threadName);
+        }
+
+        @Override
+        public void run()
+        {
+            try
+            {
+                System.out.println(Thread.currentThread().getName() + " enter");
+                Thread.sleep(new Random().nextInt(10000));
+                System.out.println(Thread.currentThread().getName() + " end");
+                cyclicBarrier.await();
+            }
+            catch (InterruptedException e)
+            {
+                e.printStackTrace();
+            }
+            catch (BrokenBarrierException e)
+            {
+                e.printStackTrace();
+            }
+            System.out.println(Thread.currentThread().getName() + " exit");
+        }
+    }
+    //endregion
+
+    //region Thread join 主线程等待所有join线程执行完毕，才继续执行。
     public static void joinThread()
         throws InterruptedException
     {
