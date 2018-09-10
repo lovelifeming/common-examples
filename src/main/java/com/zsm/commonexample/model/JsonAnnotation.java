@@ -6,6 +6,10 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 
 /**
+ * @JacksonXmlElementWrapper：可用于指定List等集合类，外围标签名；
+ * @JacksonXmlProperty：指定包装标签名，或者指定标签内部属性名；
+ * @JacksonXmlRootElement：指定生成xml根标签的名字；
+ * @JacksonXmlText：指定当前这个值，没有xml标签包裹。
  * @Author: zengsm.
  * @Description:
  * @Date:Created in 2017/12/29 10:16.
@@ -13,7 +17,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  */
 /*  @JsonIgnoreProperties
 此注解是类注解，作用是json序列化时将java bean中的一些属性忽略掉，序列化和反序列化都受影响     */
-@JsonIgnoreProperties({"modify_time","register_ip"})
+@JsonIgnoreProperties({"modify_time", "register_ip"})
 public class JsonAnnotation
 {
     private String name;
