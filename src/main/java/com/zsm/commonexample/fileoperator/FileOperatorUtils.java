@@ -336,4 +336,57 @@ public class FileOperatorUtils
 
     //endregion
 
+    /**
+     * 删除文件前面指定行内容。
+     *
+     * @param file             文件
+     * @param clearHeaderLines 指定删除行数
+     * @return
+     */
+    public static boolean removeFileHeaderLines(File file, int clearHeaderLines)
+    {
+        RandomAccessFile accessFile = null;
+        try
+        {
+            accessFile = new RandomAccessFile(file, "rw");
+            //文件起始删除读取游标
+            long pointer = accessFile.getFilePointer();
+            for (int i = 0; i < clearHeaderLines; i++)
+            {
+                String line = accessFile.readLine();
+                //读取文件内容，当为null时，文件读取到结尾或者文件为空
+                if (null == line)
+                {
+                    break;
+                }
+            }
+            //文件起始读取游标，从这儿开始读取文件内容放到文件头部
+            long readPosition = accessFile.getFilePointer();
+            byte[] bytes = new byte[1024];
+            int index;
+            while ((index = accessFile.read(bytes)) != -1)
+            {
+                accessFile.seek(pointer);
+                accessFile.write(bytes, 0, index);
+                readPosition += index;
+                pointer += index;
+                accessFile.seek(readPosition);
+            }
+            accessFile.setLength(pointer);
+            return true;
+        }
+        catch (FileNotFoundException e)
+        {
+            e.printStackTrace();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        finally
+        {
+            CommonUtils.closeStream(accessFile);
+        }
+        return false;
+    }
 }
