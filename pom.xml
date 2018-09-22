@@ -179,11 +179,11 @@
             <version>1.2.23</version>
         </dependency>
         <!--FastDFSjar包需要手动添加 https://download.csdn.net/download/z645817/10569189 -->
-        <dependency>
+        <!--<dependency>
             <groupId>org.csource</groupId>
             <artifactId>fastdfs-client-java</artifactId>
             <version>1.27</version>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
