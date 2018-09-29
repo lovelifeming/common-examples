@@ -13,17 +13,17 @@ import java.util.*;
  */
 public class DateUtils
 {
-    private static final String DATE_LONG = "yyyy-MM-dd HH:mm:ss";      //2018-07-02 20:08:02
+    public static final String DATE_LONG = "yyyy-MM-dd HH:mm:ss";      //2018-07-02 20:08:02
 
-    private static final String DATE_SHORT = "yyyy-MM-dd";              //2018-07-02
+    public static final String DATE_SHORT = "yyyy-MM-dd";              //2018-07-02
 
-    private static final String DATE_LONG_EM = "EEE MMM dd HH:mm:ss z yyyy";    //Mon Jul 02 20:08:02 CST 2018
+    public static final String DATE_LONG_EM = "EEE MMM dd HH:mm:ss z yyyy";    //Mon Jul 02 20:08:02 CST 2018
 
-    private static final String DATE_SHORT_EM = "EEE MMM dd yyyy";      //Mon Jul 02 2018
+    public static final String DATE_SHORT_EM = "EEE MMM dd yyyy";      //Mon Jul 02 2018
 
-    private static final long PERIOD_DAY = 24 * 60 * 60 * 1000;
+    public static final long PERIOD_DAY = 24 * 60 * 60 * 1000;
 
-    private static final String GMT_8 = "GMT+8";
+    public static final String GMT_8 = "GMT+8";
 
     /**
      * 初始化时间格式化对象 SimpleDateFormat
