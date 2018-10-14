@@ -14,26 +14,36 @@ import java.util.TimerTask;
  */
 public class TimerUtils
 {
-    public static void scheduleEveryDay(TimerTask timerTask, int hour, int minute, int second)
+    /**
+     *
+     * @param timerTask
+     * @param hour
+     * @param minute
+     * @param second
+     */
+    public static Timer scheduleEveryDay(TimerTask timerTask, int hour, int minute, int second)
     {
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH);
         int day = calendar.get(Calendar.DAY_OF_MONTH);
         calendar.set(year, month, day, hour, minute, second);
+        
         Timer timer = new Timer();
         Date date = new Date();
         timer.schedule(timerTask, date);
+        return timer;
     }
 
-    public static void periodSchedule(TimerTask timerTask, int period)
+    public static Timer periodSchedule(TimerTask timerTask, int period)
     {
-        periodSchedule(timerTask, period, new Date());
+        return periodSchedule(timerTask, period, new Date());
     }
 
-    public static void periodSchedule(TimerTask timerTask, int period, Date startDate)
+    public static Timer periodSchedule(TimerTask timerTask, int period, Date startDate)
     {
         Timer timer = new Timer();
         timer.schedule(timerTask, startDate, period);
+        return timer;
     }
 }

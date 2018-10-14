@@ -31,6 +31,48 @@ public class DateUtils
     private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_LONG);
 
     /**
+     * 获取当前时间的长日期格式字符串  yyyy-MM-dd HH:mm:ss
+     *
+     * @return
+     */
+    public static String getDateLongString()
+    {
+        return new SimpleDateFormat(DateUtils.DATE_LONG).format(new Date());
+    }
+
+    /**
+     * 获取时间的长日期格式字符串  yyyy-MM-dd HH:mm:ss
+     *
+     * @param date
+     * @return
+     */
+    public static String getDateLongString(Date date)
+    {
+        return new SimpleDateFormat(DateUtils.DATE_LONG).format(date);
+    }
+
+    /**
+     * 获取当前时间的短日期格式字符串  yyyy-MM-dd
+     *
+     * @return
+     */
+    public static String getDateShortString()
+    {
+        return new SimpleDateFormat(DateUtils.DATE_SHORT).format(new Date());
+    }
+
+    /**
+     * 获取时间的短日期格式字符串  yyyy-MM-dd
+     *
+     * @param date
+     * @return
+     */
+    public static String getDateShortString(Date date)
+    {
+        return new SimpleDateFormat(DateUtils.DATE_SHORT).format(date);
+    }
+
+    /**
      * 格式化时间
      *
      * @param date 默认格式：yyyy-MM-dd HH:mm:ss
