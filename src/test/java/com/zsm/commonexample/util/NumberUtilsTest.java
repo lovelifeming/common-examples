@@ -31,4 +31,11 @@ public class NumberUtilsTest
         String toHex = NumberUtils.decimalismToHex(56);
         Assert.assertEquals("F", hex);
     }
+
+    @Test
+    public void convertNumber()
+        throws Exception
+    {
+        NumberUtils.convertNumber();
+    }
 }

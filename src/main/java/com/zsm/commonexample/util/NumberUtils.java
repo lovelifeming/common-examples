@@ -15,6 +15,29 @@ public class NumberUtils
     private static final String ZERO = "0";
 
     /**
+     * 十进制转换成十六进制,十进制转换为二进制,十进制转换为八进制
+     */
+    public static void convertNumber()
+    {
+        int i = 666;
+        String hexString = Integer.toHexString(i);
+        System.out.println("十进制转换为十六进制：" + hexString);
+
+        int hexInt = Integer.parseInt(hexString, 16);
+
+        String binaryString = Integer.toBinaryString(i);
+        System.out.println("十进制转换为二进制：" + binaryString);
+
+        int binaryInt = Integer.parseInt(binaryString, 2);
+
+        String octalString = Integer.toOctalString(i);
+
+        System.out.println("十进制转换为八进制：" + octalString);
+        int octalInt = Integer.parseInt(octalString, 8);
+        System.out.println("十六进制反转：" + hexInt + " 二进制反转：" + binaryInt + " 八进制反转：" + octalInt);
+    }
+
+    /**
      * 十进制转成二进制
      */
     public static String toBinary(int value)
@@ -22,7 +45,13 @@ public class NumberUtils
         return convertInt(value, 1, 1);
     }
 
-    public static String to(int value)
+    /**
+     * 十进制转化成八进制
+     *
+     * @param value
+     * @return
+     */
+    public static String toOCT(int value)
     {
         return convertInt(value, 7, 3);
     }

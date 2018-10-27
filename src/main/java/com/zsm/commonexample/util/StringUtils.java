@@ -197,6 +197,24 @@ public class StringUtils
     }
 
     /**
+     * 分词器分割字符串
+     *
+     * @param source    原始字符串
+     * @param separator 分隔符
+     * @return
+     */
+    public static Object[] split(String source, String separator)
+    {
+        StringTokenizer tokenizer = new StringTokenizer(source, separator);
+        List<Object> temp = new ArrayList<>();
+        while (tokenizer.hasMoreElements())
+        {
+            temp.add(tokenizer.nextElement());
+        }
+        return temp.toArray();
+    }
+
+    /**
      * 判断字符串里面是否包含中文
      *
      * @param str
