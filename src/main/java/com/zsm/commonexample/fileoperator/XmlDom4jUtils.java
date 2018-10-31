@@ -2,6 +2,7 @@ package com.zsm.commonexample.fileoperator;
 
 import com.zsm.commonexample.main.Main;
 import com.zsm.commonexample.util.CommonUtils;
+import com.zsm.commonexample.util.NumberUtils;
 import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.Element;
@@ -148,7 +149,7 @@ public class XmlDom4jUtils
                 Class cla = field.getType();
                 //根据字段类型，把字符串转换为对应类型的值
                 //XmlUtils.convertType(type,field,attrValue);
-                Object o = CommonUtils.typeTransfer(cla, attrValue);
+                Object o = NumberUtils.typeTransfer(cla, attrValue);
 
                 //获得setter方法
                 String methodName = "set" + attrName.substring(0, 1).toUpperCase() + attrName.substring(1);

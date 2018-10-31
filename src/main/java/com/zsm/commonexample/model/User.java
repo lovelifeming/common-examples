@@ -1,6 +1,7 @@
 package com.zsm.commonexample.model;
 
 import java.io.Serializable;
+import java.util.List;
 
 
 /**
@@ -20,6 +21,8 @@ public class User implements Serializable
     private String address;
 
     private String telephone;
+
+    private List<String> tags;
 
     public String getName()
     {
@@ -59,6 +62,16 @@ public class User implements Serializable
     public void setTelephone(String telephone)
     {
         this.telephone = telephone;
+    }
+
+    public List<String> getTags()
+    {
+        return tags;
+    }
+
+    public void setTags(List<String> tags)
+    {
+        this.tags = tags;
     }
 
     @Override

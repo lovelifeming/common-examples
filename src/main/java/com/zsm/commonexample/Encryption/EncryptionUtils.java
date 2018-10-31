@@ -1,6 +1,7 @@
 package com.zsm.commonexample.Encryption;
 
 import com.zsm.commonexample.util.CommonUtils;
+import com.zsm.commonexample.util.NumberUtils;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
@@ -54,7 +55,7 @@ public class EncryptionUtils
         throws Exception
     {
         byte[] bytes = encryptionSHA(plaintext.getBytes());
-        String hexString = CommonUtils.byteArrayToHexString(bytes);
+        String hexString = NumberUtils.byteArrayToHexString(bytes);
         return hexString.toUpperCase();
     }
 
@@ -88,7 +89,7 @@ public class EncryptionUtils
         throws Exception
     {
         byte[] bytes = encryptionHMAC(plaintext.getBytes());
-        return CommonUtils.byteArrayToHexString(bytes);
+        return NumberUtils.byteArrayToHexString(bytes);
     }
 
     /**

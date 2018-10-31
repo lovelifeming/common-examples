@@ -1,6 +1,7 @@
 package com.zsm.commonexample.Encryption;
 
 import com.zsm.commonexample.util.CommonUtils;
+import com.zsm.commonexample.util.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,7 +67,7 @@ public class DES
             //用密钥初始化Cipher对象
             cipher.init(Cipher.ENCRYPT_MODE, secretKey, random);
             //将加密后的数据编码成字符串
-            String hexString = CommonUtils.parseBytesToHexString(cipher.doFinal(plaintext.getBytes()));
+            String hexString = NumberUtils.parseBytesToHexString(cipher.doFinal(plaintext.getBytes()));
             return hexString;
         }
         catch (Exception e)
@@ -101,7 +102,7 @@ public class DES
             //用密钥初始化Cipher对象
             cipher.init(Cipher.DECRYPT_MODE, securekey, random);
             //将加密后的数据解码再解密
-            byte[] bytes = cipher.doFinal(CommonUtils.parseHexStringToBytes(ciphertext));
+            byte[] bytes = cipher.doFinal(NumberUtils.parseHexStringToBytes(ciphertext));
             return new String(bytes);
         }
         catch (Exception e)
@@ -114,12 +115,12 @@ public class DES
 
     public static String encryptionDES(String plaintext)
     {
-        return CommonUtils.parseBytesToHexString(encryptionDES(plaintext.getBytes(), DEFAULT_KEY));
+        return NumberUtils.parseBytesToHexString(encryptionDES(plaintext.getBytes(), DEFAULT_KEY));
     }
 
     public static String decryptionDES(String ciphertext)
     {
-        return new String(decryptionDES(CommonUtils.parseHexStringToBytes(ciphertext), DEFAULT_KEY));
+        return new String(decryptionDES(NumberUtils.parseHexStringToBytes(ciphertext), DEFAULT_KEY));
     }
 
     /**

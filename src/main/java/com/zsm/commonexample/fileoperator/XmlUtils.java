@@ -1,6 +1,7 @@
 package com.zsm.commonexample.fileoperator;
 
 import com.zsm.commonexample.util.CommonUtils;
+import com.zsm.commonexample.util.NumberUtils;
 import org.dom4j.Element;
 
 import java.lang.reflect.Field;
@@ -59,7 +60,7 @@ public class XmlUtils
     {
         Class<?> cla = field.getType();
         // 根据字段的类型将值转化为相应的类型，并设置到生成的实例中。
-        Object o = CommonUtils.typeTransfer(cla, value);
+        Object o = NumberUtils.typeTransfer(cla, value);
         field.set(t, o);
     }
 }

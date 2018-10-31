@@ -1,6 +1,7 @@
 package com.zsm.commonexample.Encryption;
 
 import com.zsm.commonexample.util.CommonUtils;
+import com.zsm.commonexample.util.NumberUtils;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.UnsupportedEncodingException;
@@ -64,7 +65,7 @@ public class MD5
             // 使用指定的字节更新摘要,获得密文
             byte[] bytes = md.digest(sourceString.getBytes("UTF-8"));
             // 把密文转换成十六进制的字符串形式
-            String hexString = CommonUtils.byteArrayToHexString(bytes);
+            String hexString = NumberUtils.byteArrayToHexString(bytes);
             return hexString.toUpperCase();
         }
         return null;

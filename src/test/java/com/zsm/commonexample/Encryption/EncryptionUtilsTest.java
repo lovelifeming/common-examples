@@ -1,6 +1,7 @@
 package com.zsm.commonexample.Encryption;
 
 import com.zsm.commonexample.util.CommonUtils;
+import com.zsm.commonexample.util.NumberUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -21,7 +22,7 @@ public class EncryptionUtilsTest
     {
         byte[] sha = EncryptionUtils.encryptionSHA(plaintext);
         String hex = EncryptionUtils.encryptionSHAHex(plaintext);
-        Assert.assertEquals(CommonUtils.byteArrayToHexString(sha).toUpperCase(), hex);
+        Assert.assertEquals(NumberUtils.byteArrayToHexString(sha).toUpperCase(), hex);
     }
 
     @Test
@@ -30,7 +31,7 @@ public class EncryptionUtilsTest
     {
         String hmac = EncryptionUtils.encryptionHMAC(plaintext);
         byte[] bytes = EncryptionUtils.encryptionHMAC(plaintext.getBytes());
-        Assert.assertNotEquals(hmac, CommonUtils.byteArrayToHexString(bytes));
+        Assert.assertNotEquals(hmac, NumberUtils.byteArrayToHexString(bytes));
     }
 
     @Test
