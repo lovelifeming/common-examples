@@ -1,6 +1,5 @@
 package com.zsm.commonexample.Encryption;
 
-import com.zsm.commonexample.util.CommonUtils;
 import com.zsm.commonexample.util.NumberUtils;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;

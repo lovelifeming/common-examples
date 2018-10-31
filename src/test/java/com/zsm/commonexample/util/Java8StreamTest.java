@@ -3,7 +3,6 @@ package com.zsm.commonexample.util;
 import com.zsm.commonexample.model.User;
 import org.junit.Test;
 
-import java.nio.file.Files;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -11,7 +10,10 @@ import java.util.stream.Stream;
 
 
 /**
- * Java8 Stream流操作示例
+ * Java8 Stream流操作示例,Stream 三特性：
+ * 1.stream不存储数据
+ * 2.stream不改变源数据
+ * 3.stream的延迟执行特性
  * <p>
  * JDK 中的流来源
  * 方法	描述
@@ -108,10 +110,13 @@ public class Java8StreamTest
         System.out.println("平均年龄是：" + statistics.getAverage());
         System.out.println("年龄总和是：" + statistics.getSum());
 
+        //创建流
+        Stream<User> userStream = users.stream();
         Stream<String> stream = Stream.of("a", "b", "c", "d", "e", "f");
-        String[] array=new String[]{"a", "b", "c", "d", "e", "f"};
+        String[] array = new String[] {"a", "b", "c", "d", "e", "f"};
         Stream<String> stringStream = Stream.of(array);
         Stream<String> stringStream1 = Arrays.stream(array);
+        Stream<Object> empty = Stream.empty();
 
     }
 

@@ -1,7 +1,6 @@
 package com.zsm.commonexample.fileoperator;
 
 import com.zsm.commonexample.main.Main;
-import com.zsm.commonexample.util.CommonUtils;
 import com.zsm.commonexample.util.NumberUtils;
 import org.dom4j.Attribute;
 import org.dom4j.Document;

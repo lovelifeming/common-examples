@@ -1,6 +1,5 @@
 package com.zsm.commonexample.fileoperator;
 
-import com.zsm.commonexample.util.CommonUtils;
 import com.zsm.commonexample.util.NumberUtils;
 import org.dom4j.Element;
 

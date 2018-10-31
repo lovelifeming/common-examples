@@ -1,6 +1,5 @@
 package com.zsm.commonexample.Encryption;
 
-import com.zsm.commonexample.util.CommonUtils;
 import com.zsm.commonexample.util.NumberUtils;
 import org.junit.Assert;
 import org.junit.Test;
