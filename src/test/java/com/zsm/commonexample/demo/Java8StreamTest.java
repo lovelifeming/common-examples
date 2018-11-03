@@ -1,4 +1,4 @@
-package com.zsm.commonexample.util;
+package com.zsm.commonexample.demo;
 
 import com.zsm.commonexample.model.User;
 import org.junit.Test;

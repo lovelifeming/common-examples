@@ -1,4 +1,4 @@
-package com.zsm.commonexample.util;
+package com.zsm.commonexample.demo;
 
 import org.junit.Test;
 
