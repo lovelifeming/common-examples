@@ -1,5 +1,8 @@
 package com.zsm.commonexample.interview;
 
+import org.junit.Test;
+
+
 /**
  * @Author: zengsm.
  * @Description: TODO()
@@ -10,7 +13,6 @@ public class TryCatchTest
 {
     public static void main(String[] args)
     {
-
         System.out.println("getName return:" + getName());
     }
 
@@ -41,6 +43,20 @@ public class TryCatchTest
             System.out.println("finally print:" + name);
             //return name;
         }
+    }
+
+    public static final int END_NUMBER = Integer.MAX_VALUE;
+
+    public static final int START_NUMBER = END_NUMBER - 2;
+
+    @Test
+    public void testCycle()
+    {
+        //循环整数游标index越界
+        int count = 0;
+        for (int index = START_NUMBER; index <= END_NUMBER; index++)
+            count++;
+        System.out.println(count);
     }
 
 }
