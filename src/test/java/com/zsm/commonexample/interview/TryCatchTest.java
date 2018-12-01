@@ -11,13 +11,15 @@ import org.junit.Test;
  */
 public class TryCatchTest
 {
-    public static void main(String[] args)
+    @Test
+    public void testTryCatchFinally()
     {
         System.out.println("getName return:" + getName());
     }
 
     /**
      * 测试try-catch-finally执行过程，try-catch中的return的值不会受finally影响。在finally中有return，会直接返回忽略其他return。
+     * try-catch-finally中的return优先级：finally < catch < try
      *
      * @return
      */
@@ -55,8 +57,12 @@ public class TryCatchTest
         //循环整数游标index越界
         int count = 0;
         for (int index = START_NUMBER; index <= END_NUMBER; index++)
+        {
+            if (count > 100)
+                break;
             count++;
-        System.out.println(count);
+        }
+        System.out.println("循环次数:" + count);
     }
 
 }

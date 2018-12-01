@@ -16,8 +16,10 @@ public class FileTest
     @Test
     public void testMKDir()
     {
-        String path = "D:/home/nginx/file";
+        String path = "D:/test/home/nginx/file";
+        //只创建最后一级文件夹
         new File(path).mkdir();
+        //递归创建文件夹
         new File(path).mkdirs();
     }
 }

@@ -1,5 +1,8 @@
 package com.zsm.commonexample.interview;
 
+import org.junit.Test;
+
+
 /**
  * @Author: zengsm.
  * @Description: TODO()
@@ -8,16 +11,12 @@ package com.zsm.commonexample.interview;
  */
 public class StringTest
 {
-    public static void main(String[] args)
-    {
-        definitionName();
-    }
-
     /**
      * 变量命名规则:以字母、下划线(_)或者美元符($)开头，后面跟字母、下划线、美元符、数字，变量名对大小写敏感，无长度限制
      * 不能以数字开头，不能是Java关键字
      */
-    public static void definitionName()
+    @Test
+    public void definitionName()
     {
         String $aa = "abcd";
         //String new = "bdef";/* 非法命名，不能以关键字命名 */
