@@ -87,12 +87,12 @@ public class FileUtils
         // /opt/rh/test.jar
         String path3 = this.getClass().getProtectionDomain().getCodeSource().getLocation().getFile();
 
-        //  test.jar
+        //  test.jar    启动jar包命令参数
         String path4 = System.getProperty("java.class.path");
 
-        // /opt/rh
+        // /opt/rh  启动命令目录
         String path5 = System.getProperty("user.dir");
-        // /opt/rh
+        // /opt/rh  启动命令目录
         String path6 = new File("").getAbsolutePath();
 
         //  file:/opt/rh/test.jar!/

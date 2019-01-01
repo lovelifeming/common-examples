@@ -98,6 +98,8 @@ public class SystemProperty
         System.out.println("用户的主目录：" + System.getProperty("user.home"));
         //用户的当前工作目录：D:\CommonExamples
         System.out.println("用户的当前工作目录：" + System.getProperty("user.dir"));
+        //获取JVM虚拟机是32位还是64位
+        System.out.println("JVM虚拟机是：" + System.getProperty("sun.arch.data.model") + "位");
     }
 
     /**
@@ -106,10 +108,13 @@ public class SystemProperty
     public static void showRuntimeProperties()
     {
         Runtime runtime = Runtime.getRuntime();
+        int radius = 1024 * 1024;
         //JVM可以使用的总内存:128974848
-        System.out.println("JVM可以使用的总内存:" + runtime.totalMemory());
+        System.out.println("JVM可以使用的总内存:" + runtime.totalMemory() / radius);
         //JVM可以使用的剩余内存:123484832
-        System.out.println("JVM可以使用的剩余内存:" + runtime.freeMemory());
+        System.out.println("JVM可以使用的剩余内存:" + runtime.freeMemory() / radius);
+        //获取最大内存的字节数
+        System.out.println("JVM可以使用的最大内存:" + Runtime.getRuntime().maxMemory() / radius);
         //JVM可以使用的处理器个数:4
         System.out.println("JVM可以使用的处理器个数:" + runtime.availableProcessors());
     }
@@ -127,5 +132,17 @@ public class SystemProperty
         System.out.println("本地ip地址:" + address.getHostAddress());
         //本地主机名:DESKTOP-E0KNBMF
         System.out.println("本地主机名:" + address.getHostName());
+    }
+
+    public static void GCAndExit()
+    {
+        //调用GC垃圾收集，但没有办法保证GC的执行
+        System.gc();    //底层是间接调用 Runtime.getRuntime().gc();
+        Runtime.getRuntime().gc();
+
+        //直接退出或JVM.非零表示异常终止.0表示正常退出
+        System.exit(0); //底层都是间接调用 Shutdown.halt0();
+        Runtime.getRuntime().exit(1);
+        Runtime.getRuntime().halt(1);
     }
 }
