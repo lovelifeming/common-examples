@@ -134,6 +134,9 @@ public class SystemProperty
         System.out.println("本地主机名:" + address.getHostName());
     }
 
+    /**
+     * 调用GC垃圾回收，退出JVM程序
+     */
     public static void GCAndExit()
     {
         //调用GC垃圾收集，但没有办法保证GC的执行

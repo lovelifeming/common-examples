@@ -176,7 +176,7 @@ public class FileOperatorUtils
     }
 
     /**
-     * 递归遍历删除所以文件
+     * 递归遍历删除所有文件
      *
      * @param file 文件路径
      */
