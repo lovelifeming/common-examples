@@ -1,7 +1,7 @@
 package com.zsm.commonexample.framework;
 
 /**
- * 懒汉式单例，饿汉式单例
+ * 懒汉式单例，饿汉式单例，双重锁单例，内部类单例，枚举单例
  *
  * @Author: zengsm.
  * @Description: TODO()
@@ -10,12 +10,11 @@ package com.zsm.commonexample.framework;
  */
 public class Singleton
 {
-    //region 懒汉式单例
+    //region 双重锁检查，需要注意变量添加 volatile 和两次变量判空
     private volatile static Singleton singleton;
 
     private Singleton()
     {
-
     }
 
     public static Singleton getInstance()
@@ -35,7 +34,7 @@ public class Singleton
     }
     //endregion
 
-    //region 饿汉式单例
+    //region 懒汉式单例
     /*private static Singleton singleton;
 
     private Singleton()
@@ -48,6 +47,19 @@ public class Singleton
         {
             singleton = new Singleton();
         }
+        return singleton;
+    }*/
+    //endregion
+
+    //region 饿汉式单例
+    /*private static Singleton singleton = new Singleton();
+
+    private Singleton()
+    {
+    }
+
+    public static Singleton getInstance()
+    {
         return singleton;
     }*/
     //endregion

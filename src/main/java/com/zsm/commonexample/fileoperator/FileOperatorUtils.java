@@ -10,6 +10,7 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.List;
 
 
 /**
@@ -176,7 +177,7 @@ public class FileOperatorUtils
     }
 
     /**
-     * 递归遍历删除所有文件
+     * 递归遍历删除所有文件及文件夹
      *
      * @param file 文件路径
      */
@@ -199,6 +200,63 @@ public class FileOperatorUtils
             }
         }
         file.delete();
+    }
+
+    /**
+     * 递归遍历所有文件，获取所有文件名
+     *
+     * @param dirPath 文件夹路径
+     * @param filter  过滤器
+     * @return
+     */
+    public static String[] recursionAllFileName(String dirPath, FilenameFilter filter)
+    {
+        ArrayList<String> files = new ArrayList<>();
+        File file = new File(dirPath);
+        if (file.isFile())
+        {
+            files.add(file.getName());
+            return files.toArray(new String[files.size()]);
+        }
+        else if (file.isDirectory())
+        {
+            recursionAllFileNames(file, files, filter);
+            return files.toArray(new String[files.size()]);
+        }
+        return new String[] {"There is problem with the file path entered!"};
+    }
+
+    /**
+     * 递归遍历所有文件，获取所有文件名
+     *
+     * @param file   文件对象
+     * @param names  文件名
+     * @param filter 过滤器
+     * @return
+     */
+    public static List<String> recursionAllFileNames(File file, List<String> names, FilenameFilter filter)
+    {
+        if (!file.exists())
+        {
+            return names;
+        }
+        File[] fileList = file.listFiles(filter);
+        for (File f : fileList)
+        {
+            if (f.isDirectory())
+            {
+                recursionAllFileNames(f, names, filter);
+            }
+            else
+            {
+                names.add(f.getName());
+            }
+        }
+        if (file.isFile())
+        {
+            names.add(file.getName());
+        }
+        return names;
     }
 
     /**

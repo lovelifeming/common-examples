@@ -121,4 +121,24 @@ public class SerializableUtils
         }
     }
 
+    /**
+     * 序列化深拷贝，先将对象序列化成字节，再反序列化成对象
+     *
+     * @param source 源对象
+     * @param <T>    目标对象
+     * @return
+     */
+    public static <T> T deepCopy(T source)
+        throws IOException, ClassNotFoundException
+    {
+        ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+        ObjectOutputStream out = new ObjectOutputStream(byteOut);
+        out.writeObject(source);
+        ByteArrayInputStream byteIn = new ByteArrayInputStream(byteOut.toByteArray());
+        ObjectInputStream in = new ObjectInputStream(byteIn);
+        @SuppressWarnings("unchecked")
+        T dest = (T)in.readObject();
+        return dest;
+    }
+
 }
