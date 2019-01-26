@@ -18,6 +18,8 @@ package com.zsm.commonexample.demo;
  * <p>
  * 下划线不能用在变量名中
  * <p>
+ * 全新的 HTTP 客户端 API
+ * <p>
  * 支持私有接口方法(您可以使用diamond语法与匿名内部类结合使用)
  * <p>
  * Javadoc

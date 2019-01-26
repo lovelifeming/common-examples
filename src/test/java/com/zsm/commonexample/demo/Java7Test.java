@@ -1,5 +1,6 @@
 package com.zsm.commonexample.demo;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.BufferedReader;
@@ -44,6 +45,7 @@ import java.util.Map;
  * @Date:Created in 2018/12/5.
  * @Modified By:
  */
+@Ignore
 public class Java7Test
 {
     @Test
