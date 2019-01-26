@@ -13,6 +13,22 @@ import java.util.regex.Pattern;
 public class StringUtils
 {
     /**
+     * 特殊字符转义,防止字符串里面的特殊字符被转义.
+     */
+    public static String conversionSpecialCharacter(String content)
+    {
+        content.replace("\\", "\\\\").replace("*", "\\*")
+            .replace("+", "\\+").replace("|", "\\|")
+            .replace("{", "\\{").replace("}", "\\}")
+            .replace("(", "\\(").replace(")", "\\)")
+            .replace("^", "\\^").replace("$", "\\$")
+            .replace("[", "\\[").replace("]", "\\]")
+            .replace("?", "\\?").replace(",", "\\,")
+            .replace(".", "\\.").replace("&", "\\&");
+        return content;
+    }
+
+    /**
      * 字符串格式化
      */
     public static void demonstrationString()
