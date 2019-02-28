@@ -22,7 +22,7 @@
         <commons-logging.version>1.1.1</commons-logging.version>
         <ezmorph.version>1.0.6</ezmorph.version>
         <jackson.version>1.9.13</jackson.version>
-        <jackson-databind.version>2.9.2</jackson-databind.version>
+        <jackson-databind.version>2.9.8</jackson-databind.version>
     </properties>
 
     <dependencies>
@@ -155,7 +155,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-compress</artifactId>
-            <version>1.16.1</version>
+            <version>1.18</version>
         </dependency>
         <!--aliyun OSS-->
         <dependency>
@@ -182,12 +182,12 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
-            <version>5.0.1.RELEASE</version>
+            <version>5.0.7.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-aop</artifactId>
-            <version>5.0.1.RELEASE</version>
+            <version>5.0.7.RELEASE</version>
         </dependency>
         <!--mysql bin-log日志解析-->
         <dependency>

@@ -2,6 +2,7 @@ package com.zsm.commonexample.Encryption;
 
 import com.zsm.commonexample.util.NumberUtils;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.util.DigestUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
@@ -68,5 +69,16 @@ public class MD5
             return hexString.toUpperCase();
         }
         return null;
+    }
+
+    /**
+     * 使用spring框架自带MD5加密方法
+     *
+     * @param source 加密源字符串
+     * @return 加密密钥
+     */
+    public static String encodeBySpringFramework(String source)
+    {
+        return DigestUtils.md5DigestAsHex(source.getBytes());
     }
 }

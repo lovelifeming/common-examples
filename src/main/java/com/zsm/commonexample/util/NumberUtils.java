@@ -3,6 +3,7 @@ package com.zsm.commonexample.util;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.List;
@@ -25,6 +26,22 @@ public class NumberUtils
         "e", "f"};
 
     /**
+     * 初始化 62 进制数据，索引位置代表转换字符的数值 0-61，比如 A代表10，z代表61
+     */
+    private static String CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    //private static String CHARS = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+    /**
+     * 进制转换比率
+     */
+    private static int SCALE = 62;
+
+    /**
+     * 匹配字符串只包含数字和大小写字母
+     */
+    private static String REGEX = "^[0-9a-zA-Z]+$";
+
+    /**
      * 十进制转换成十六进制,十进制转换为二进制,十进制转换为八进制
      */
     public static void convertNumber()
@@ -34,6 +51,8 @@ public class NumberUtils
         System.out.println("十进制转换为十六进制：" + hexString);
 
         int hexInt = Integer.parseInt(hexString, 16);
+        //如果是负数十六进制转回十进制，实现 BigInteger 获取
+        int hexNegativeInt = new BigInteger(hexString, 16).intValue();
 
         String binaryString = Integer.toBinaryString(i);
         System.out.println("十进制转换为二进制：" + binaryString);
@@ -50,9 +69,9 @@ public class NumberUtils
     /**
      * 十进制转成二进制
      */
-    public static String toBinary(int value)
+    public static String toBinary(int val)
     {
-        return convertInt(value, 1, 1);
+        return convertInt(val, 1, 1);
     }
 
     /**
@@ -69,12 +88,12 @@ public class NumberUtils
     /**
      * 十进制转换成十六进制
      *
-     * @param value
+     * @param val
      * @return
      */
-    public static String toHex(int value)
+    public static String toHex(int val)
     {
-        return convertInt(value, 15, 4);
+        return convertInt(val, 15, 4);
     }
 
     /**
@@ -119,6 +138,76 @@ public class NumberUtils
         DecimalFormat fmat = new DecimalFormat("\u00A4##.0");
         return fmat.format(d);
     }
+
+    //region 十进制数字与62进制字符串相互转换   62进制最多有 2^62 - 1个， max:AzL8n0Y58m7
+
+    /**
+     * 十进制数字转为62进制字符串
+     *
+     * @param val    十进制数字
+     * @param length 输出字符串长度
+     * @return 62进制字符串
+     */
+    public static String encode10To62(long val, int length)
+    {
+        return org.apache.commons.lang3.StringUtils.leftPad(encode10To62(val), length, '0');
+    }
+
+    /**
+     * 十进制数字转为62进制字符串
+     *
+     * @param val 十进制数字
+     * @return 62进制字符串
+     */
+    public static String encode10To62(long val)
+    {
+        if (val < 0)
+        {
+            throw new IllegalArgumentException("this is an Invalid parameter:" + val);
+        }
+        StringBuilder sb = new StringBuilder();
+        int remainder;
+        while (Math.abs(val) > SCALE - 1)
+        {
+            //从最后一位开始进制转换，取转换后的值，最后反转字符串
+            remainder = Long.valueOf(val % SCALE).intValue();
+            sb.append(CHARS.charAt(remainder));
+            val = val / SCALE;
+        }
+        //获取最高位
+        sb.append(CHARS.charAt(Long.valueOf(val).intValue()));
+        return sb.reverse().toString();
+    }
+
+    /**
+     * 十进制数字转为62进制字符串
+     *
+     * @param val 62进制字符串
+     * @return 十进制数字
+     */
+    public static long decode62To10(String val)
+    {
+        if (val == null)
+        {
+            throw new NumberFormatException("null");
+        }
+        if (!val.matches(REGEX))
+        {
+            throw new IllegalArgumentException("this is an Invalid parameter:" + val);
+        }
+        String tmp = val.replace("^0*", "");
+
+        long result = 0;
+        int index = 0;
+        int length = tmp.length();
+        for (int i = 0; i < length; i++)
+        {
+            index = CHARS.indexOf(tmp.charAt(i));
+            result += (long)(index * Math.pow(SCALE, length - i - 1));
+        }
+        return result;
+    }
+    //endregion
 
     //region  ~(取反)、&(与)、｜(或)、^(异或)、>>(右移)、<<(左移)、>>>(无符号右移)
     //>>：带符号右移。正数右移高位补0，负数右移高位补1。>>>：无符号右移。无论是正数还是负数，高位通通补0。
