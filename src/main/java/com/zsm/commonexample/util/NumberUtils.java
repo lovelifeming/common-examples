@@ -317,7 +317,7 @@ public class NumberUtils
         while (decimalism != 0)
         {
             int hexValue = decimalism % 16;
-            hex = toHexCHar(hexValue) + hex;
+            hex = toHexChar(hexValue) + hex;
             decimalism = decimalism / 16;
         }
         return hex;
@@ -329,7 +329,7 @@ public class NumberUtils
      * @param hexValue
      * @return
      */
-    public static char toHexCHar(int hexValue)
+    public static char toHexChar(int hexValue)
     {
         if (hexValue <= 9 && hexValue >= 0)
         {
