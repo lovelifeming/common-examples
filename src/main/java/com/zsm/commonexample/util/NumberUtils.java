@@ -51,7 +51,7 @@ public class NumberUtils
         System.out.println("十进制转换为十六进制：" + hexString);
 
         int hexInt = Integer.parseInt(hexString, 16);
-        //如果是负数十六进制转回十进制，实现 BigInteger 获取
+        //如果是负数十六进制转为十进制，使用 BigInteger 获取
         int hexNegativeInt = new BigInteger(hexString, 16).intValue();
 
         String binaryString = Integer.toBinaryString(i);
