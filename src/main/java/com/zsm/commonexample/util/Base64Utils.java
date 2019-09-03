@@ -125,7 +125,7 @@ public class Base64Utils
                     bytes[i] += 256;
                 }
             }
-            String imgFilePath = FileUtils.combineFilePath(filePath, fileName);
+            String imgFilePath = FileUtils.createFilePath(filePath, fileName);
             // 生成图片
             OutputStream out = new FileOutputStream(imgFilePath);
             out.write(bytes);

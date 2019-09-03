@@ -128,7 +128,7 @@ public class SystemProperty
         throws UnknownHostException
     {
         InetAddress address = InetAddress.getLocalHost();
-        //本地ip地址:192.168.11.179
+        //本地ip地址:192.168.1.10
         System.out.println("本地ip地址:" + address.getHostAddress());
         //本地主机名:DESKTOP-E0KNBMF
         System.out.println("本地主机名:" + address.getHostName());

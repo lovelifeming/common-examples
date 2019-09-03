@@ -100,13 +100,13 @@ public class FileUtils
     }
 
     /**
-     * 获取文件路径
+     * 创建文件路径
      *
      * @param directory 文件目录
      * @param fileName  文件名称
      * @return 全文件路径
      */
-    public static String combineFilePath(String directory, String fileName)
+    public static String createFilePath(String directory, String fileName)
     {
         if (!directory.endsWith(FILE_SEPARATOR))
         {

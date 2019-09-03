@@ -92,7 +92,7 @@ public class Java5Tes
 @Documented
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
-@interface funcation
+@interface MyFunction
 {
 
 }

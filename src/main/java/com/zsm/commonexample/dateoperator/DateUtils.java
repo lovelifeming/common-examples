@@ -1,5 +1,9 @@
 package com.zsm.commonexample.dateoperator;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -13,13 +17,26 @@ import java.util.*;
  */
 public class DateUtils
 {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DateUtils.class);
+
     public static final String DATE_LONG = "yyyy-MM-dd HH:mm:ss";      //2018-07-02 20:08:02
 
     public static final String DATE_SHORT = "yyyy-MM-dd";              //2018-07-02
 
     public static final String DATE_LONG_EM = "EEE MMM dd HH:mm:ss z yyyy";    //Mon Jul 02 20:08:02 CST 2018
 
+    public static final String DATE_LONG_T = "yyyy-MM-dd'T'HH:mm:ss";    //2019-07-17T10:00:02.657Z
+
     public static final String DATE_SHORT_EM = "EEE MMM dd yyyy";      //Mon Jul 02 2018
+
+    //      示例：2019-07-17T10:00:02.657Z
+    public static final SimpleDateFormat SIMPLE_DATE_FORMAT_T = new SimpleDateFormat(DATE_LONG_T);
+
+    //      示例：Wed Jul 17 10:00:02 CST 2019
+    public static final SimpleDateFormat SIMPLE_DATE_FORMAT_EZ = new SimpleDateFormat(DATE_LONG_EM, Locale.UK);
+
+    //      示例：2019-07-17 10:00:02
+    public static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat(DATE_LONG);
 
     public static final long PERIOD_DAY = 24 * 60 * 60 * 1000;
 
@@ -35,7 +52,7 @@ public class DateUtils
      *
      * @return
      */
-    public static String getDateLongString()
+    public static String getNowDateLongString()
     {
         return new SimpleDateFormat(DateUtils.DATE_LONG).format(new Date());
     }
@@ -70,6 +87,28 @@ public class DateUtils
     public static String getDateShortString(Date date)
     {
         return new SimpleDateFormat(DateUtils.DATE_SHORT).format(date);
+    }
+
+    /**
+     * 例如：2019-07-17T10:00:02.657Z 转换为标准时间 2019-07-17 10:00:02
+     *
+     * @param dateString
+     * @return
+     */
+    public static String convertUTCToStandard(String dateString)
+    {
+        String result = "";
+        try
+        {
+            result = SIMPLE_DATE_FORMAT.format(
+                SIMPLE_DATE_FORMAT_EZ.parse(SIMPLE_DATE_FORMAT_T.parse(dateString).toString()));
+        }
+        catch (ParseException e)
+        {
+            e.printStackTrace();
+            System.out.println(e);
+        }
+        return result;
     }
 
     /**
@@ -329,6 +368,21 @@ public class DateUtils
     }
 
     /**
+     * 增加或者减少天数，number为正整数增加，number为负数减少
+     *
+     * @param date
+     * @param number
+     * @return
+     */
+    public static Date addHours(Date date, int number)
+    {
+        Calendar startDT = Calendar.getInstance();
+        startDT.setTime(date);
+        startDT.add(Calendar.HOUR_OF_DAY, number);
+        return startDT.getTime();
+    }
+
+    /**
      * 将国际化的时间格式转换为标准时间
      *
      * @param date 时间字符串    EEE MMM dd HH:mm:ss z yyyy
@@ -377,10 +431,98 @@ public class DateUtils
         return target.format(parse);
     }
 
-    public enum CharSet
+    /**
+     * 获取一段时间内的以天为单位的日期集合
+     */
+    public static List<String> getPerDaysByStartAndEndDate(String startDate, String endDate, String dateFormat)
     {
-        LONG_DATE,
-        SHORT_DATA,
+        return getPerDaysByStartAndEndDate(startDate, endDate, Calendar.DAY_OF_MONTH, dateFormat);
     }
 
+    public static List<String> getPerDaysByStartAndEndDate(String startDate, String endDate, int calendarField,
+                                                           String dateFormat)
+    {
+        DateFormat format = new SimpleDateFormat(dateFormat);
+        try
+        {
+            Date sDate = format.parse(startDate);
+            Date eDate = format.parse(endDate);
+            long start = sDate.getTime();
+            long end = eDate.getTime();
+            if (start >= end)
+            {
+                String result = format.format(eDate);
+                return new ArrayList<String>()
+                {{add(result);}};
+            }
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(sDate);
+            List<String> res = new ArrayList<String>();
+            while (start < end)
+            {
+                res.add(format.format(calendar.getTime()));
+                calendar.add(calendarField, 1);
+                start = calendar.getTimeInMillis();
+            }
+            return res;
+        }
+        catch (ParseException e)
+        {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return null;
+    }
+
+    public enum CharSet
+    {
+        DATE_LONG(1, "yyyy-MM-dd HH:mm:ss"),
+        DATA_SHORT(2, "yyyy-MM-dd"),
+        DATA_LONG_EM(3, "EEE MMM dd HH:mm:ss z yyyy"),
+        DATA_SHORT_EM(4, "EEE MMM dd yyyyd"),
+        DATA_LONG_SLASH(5, "yyyy/MM/dd HH:mm:ss"),
+        DATA_SHORT_SLASH(6, "yyyy/MM/dd"),
+        DATA_LONG_T(6, "yyyy-MM-dd'T'HH:mm:ss");
+
+        private int index;
+
+        private String pattern;
+
+        private CharSet(int index, String pattern)
+        {
+            this.index = index;
+            this.pattern = pattern;
+        }
+
+        public static String getPattern(int index)
+        {
+            for (CharSet cs : CharSet.values())
+            {
+                if (cs.getIndex() == index)
+                {
+                    return cs.getPattern();
+                }
+            }
+            return null;
+        }
+
+        public int getIndex()
+        {
+            return index;
+        }
+
+        public void setIndex(int index)
+        {
+            this.index = index;
+        }
+
+        public String getPattern()
+        {
+            return pattern;
+        }
+
+        public void setPattern(String pattern)
+        {
+            this.pattern = pattern;
+        }
+    }
 }
