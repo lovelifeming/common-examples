@@ -1,4 +1,4 @@
-package com.zsm.commonexample.Encryption;
+package com.zsm.commonexample.encryption;
 
 import javax.net.ssl.*;
 import java.io.IOException;

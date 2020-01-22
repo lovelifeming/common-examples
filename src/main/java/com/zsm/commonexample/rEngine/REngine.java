@@ -1,4 +1,4 @@
-package com.zsm.commonexample.REngine;
+package com.zsm.commonexample.rEngine;
 
 import org.rosuda.REngine.REXP;
 import org.rosuda.REngine.REXPMismatchException;

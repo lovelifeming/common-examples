@@ -1,4 +1,4 @@
-package com.zsm.commonexample.Encryption;
+package com.zsm.commonexample.encryption;
 
 import com.sun.org.apache.xerces.internal.impl.dv.util.HexBin;
 import org.junit.Assert;

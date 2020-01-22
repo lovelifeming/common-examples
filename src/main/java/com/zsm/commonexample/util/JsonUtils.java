@@ -5,6 +5,7 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
 import net.sf.json.xml.XMLSerializer;
+import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.type.CollectionType;
 import org.codehaus.jackson.map.type.MapType;
@@ -13,6 +14,7 @@ import org.codehaus.jackson.type.JavaType;
 import org.w3c.dom.Document;
 
 import java.io.IOException;
+import java.io.StringWriter;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -94,6 +96,27 @@ public class JsonUtils
     }
 
     /**
+     * 将集合数组转化成JSON字符串
+     *
+     * @param list
+     * @return
+     */
+    public static String listToJSON(List list)
+    {
+        com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+        StringWriter sw = new StringWriter();
+        try
+        {
+            mapper.writeValue(sw, list);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return sw.toString();
+    }
+
+    /**
      * 将String对象转化成 T 对象
      *
      * @param json
@@ -105,6 +128,7 @@ public class JsonUtils
     {
         try
         {
+            OBJECT_MAPPER.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
             return OBJECT_MAPPER.readValue(json, beanType);
         }
         catch (IOException e)
@@ -124,6 +148,7 @@ public class JsonUtils
      */
     public static <T> List<T> jsonToListByCollectionType(String json, Class<?> typeClass)
     {
+        OBJECT_MAPPER.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         CollectionType type = TypeFactory.defaultInstance().constructCollectionType(ArrayList.class, typeClass);
         List<T> list;
         try
@@ -187,6 +212,20 @@ public class JsonUtils
             throw new RuntimeException("json数据转化为Map对象失败，可能是对象类型不匹配");
         }
         return map;
+    }
+
+    /**
+     * 获取泛型的 Collection Type 集合数据结构类型
+     *
+     * @param collectionClass 泛型的Collection
+     * @param elementClasses  元素类
+     * @return JavaType Java类型
+     */
+    public static com.fasterxml.jackson.databind.JavaType getCollectionType(Class<?> collectionClass,
+                                                                            Class<?>... elementClasses)
+    {
+        com.fasterxml.jackson.databind.ObjectMapper om = new com.fasterxml.jackson.databind.ObjectMapper();
+        return om.getTypeFactory().constructParametricType(collectionClass, elementClasses);
     }
 
     /**

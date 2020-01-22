@@ -77,6 +77,12 @@ public class User implements Serializable
     @Override
     public String toString()
     {
-        return name + age + address + telephone;
+        return "User{" +
+               "name='" + name + '\'' +
+               ", age=" + age +
+               ", address='" + address + '\'' +
+               ", telephone='" + telephone + '\'' +
+               ", tags=" + tags +
+               '}';
     }
 }
