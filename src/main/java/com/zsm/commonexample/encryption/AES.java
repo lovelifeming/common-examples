@@ -1,5 +1,7 @@
 package com.zsm.commonexample.encryption;
 
+import org.apache.commons.codec.binary.Base64;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sun.misc.BASE64Decoder;
@@ -8,8 +10,12 @@ import sun.misc.BASE64Encoder;
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import java.security.AlgorithmParameters;
 import java.security.SecureRandom;
+import java.security.Security;
+import java.util.Arrays;
 
 
 /**
@@ -122,5 +128,131 @@ public class AES
             e.printStackTrace();
         }
         return null;
+    }
+
+    /**
+     * AES加密字符串
+     *
+     * @param content        需要被加密的字符串
+     * @param password       加密需要的密码
+     * @param encodingFormat 加密内容编码格式 UTF-8
+     * @return 密文
+     */
+    public static byte[] encrypt(String content, String password, String encodingFormat)
+    {
+        try
+        {
+            // 创建AES的Key生产者
+            KeyGenerator kgen = KeyGenerator.getInstance("AES");
+            // 利用用户密码作为随机数初始化出
+            kgen.init(128, new SecureRandom(password.getBytes()));
+            //加密没关系，SecureRandom是生成安全随机数序列，password.getBytes()是种子，只要种子相同，序列就一样，所以解密只要有password就行
+            SecretKey secretKey = kgen.generateKey();// 根据用户密码，生成一个密钥
+            byte[] enCodeFormat = secretKey.getEncoded();// 返回基本编码格式的密钥，如果此密钥不支持编码，则返回
+            SecretKeySpec key = new SecretKeySpec(enCodeFormat, "AES");// 转换为AES专用密钥
+            Cipher cipher = Cipher.getInstance("AES");// 创建密码器
+            byte[] byteContent = content.getBytes(encodingFormat);
+            cipher.init(Cipher.ENCRYPT_MODE, key);// 初始化为加密模式的密码器
+            byte[] result = cipher.doFinal(byteContent);// 加密
+            return result;
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * 解密AES加密过的字符串
+     *
+     * @param content        AES加密过过的内容
+     * @param password       加密时的密码
+     * @param encodingFormat 加密内容编码格式 UTF-8
+     * @return 明文
+     */
+    public static byte[] decrypt(byte[] content, String password, String encodingFormat)
+    {
+        try
+        {
+            // 创建AES的Key生产者
+            KeyGenerator kgen = KeyGenerator.getInstance("AES");
+            kgen.init(128, new SecureRandom(password.getBytes()));
+            // 根据用户密码，生成一个密钥
+            SecretKey secretKey = kgen.generateKey();
+            byte[] enCodeFormat = secretKey.getEncoded();// 返回基本编码格式的密钥
+            SecretKeySpec key = new SecretKeySpec(enCodeFormat, "AES");// 转换为AES专用密钥
+            Cipher cipher = Cipher.getInstance("AES");// 创建密码器
+            cipher.init(Cipher.DECRYPT_MODE, key);// 初始化为解密模式的密码器
+            byte[] result = cipher.doFinal(content);
+            return result; // 明文
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * 解密微信用户登录信息
+     * <p>
+     * 对称解密使用的算法为 AES-128-CBC，数据采用PKCS#7填充。
+     * 对称解密的目标密文为 Base64_Decode(encryptedData)。
+     * 对称解密秘钥 aeskey = Base64_Decode(session_key), aeskey 是16字节。
+     * 对称解密算法初始向量 为Base64_Decode(iv)，其中iv由数据接口返回。
+     *
+     * @param encryptedData 包括敏感数据在内的完整用户信息的加密数据
+     * @param sessionKey    数据进行加密签名的密钥
+     * @param iv            加密算法的初始向量
+     * @return
+     */
+    public static String decodeGroupInfo(String encryptedData, String sessionKey, String iv)
+    {
+        if (null != encryptedData && null != sessionKey && null != iv)
+        {
+            //被加密的数据
+            byte[] dataByte = Base64.decodeBase64(encryptedData);
+            //加密秘钥
+            byte[] keyByte = Base64.decodeBase64(sessionKey);
+            //偏移量
+            byte[] ivByte = Base64.decodeBase64(iv);
+            try
+            {
+                // 如果密钥不足16位，那么就补足.  这个if 中的内容很重要
+                int base = 16;
+                if (keyByte.length % base != 0)
+                {
+                    int groups = keyByte.length / base + (keyByte.length % base != 0 ? 1 : 0);
+                    byte[] temp = new byte[groups * base];
+                    Arrays.fill(temp, (byte)0);
+                    System.arraycopy(keyByte, 0, temp, 0, keyByte.length);
+                    keyByte = temp;
+                }
+                // 初始化
+                Security.addProvider(new BouncyCastleProvider());
+                Cipher cipher = Cipher.getInstance("AES/CBC/PKCS7Padding", "BC");
+                SecretKeySpec spec = new SecretKeySpec(keyByte, "AES");
+                AlgorithmParameters parameters = AlgorithmParameters.getInstance("AES");
+                parameters.init(new IvParameterSpec(ivByte));
+                cipher.init(Cipher.DECRYPT_MODE, spec, parameters);// 初始化
+                byte[] resultByte = cipher.doFinal(dataByte);
+                if (null != resultByte && resultByte.length > 0)
+                {
+                    String result = new String(resultByte, "UTF-8");
+                    return result;
+                }
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+                LOGGER.error(e.getMessage());
+            }
+            return null;
+        }
+        else
+        {
+            return null;
+        }
     }
 }
