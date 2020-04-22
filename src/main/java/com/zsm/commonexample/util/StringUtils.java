@@ -1,6 +1,7 @@
 package com.zsm.commonexample.util;
 
 import java.util.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
@@ -12,6 +13,50 @@ import java.util.regex.Pattern;
  */
 public class StringUtils
 {
+    static final Pattern REGEX_IS_NUM = Pattern.compile("[0-9]*");
+
+    static final Pattern REGEX_IS_DATE = Pattern.compile(
+        "^((\\d{2}(([02468][048])|([13579][26]))[\\-\\/\\s]?((((0?[13578])|(1[02]))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])" +
+        "|(3[01])))|(((0?[469])|(11))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(30)))|(0?2[\\-\\/\\s]?" +
+        "((0?[1-9])|([1-2][0-9])))))|(\\d{2}(([02468][1235679])|([13579][01345789]))[\\-\\/\\s]?" +
+        "((((0?[13578])|(1[02]))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(3[01])))|(((0?[469])|(11))[\\-\\/\\s]?" +
+        "((0?[1-9])|([1-2][0-9])|(30)))|(0?2[\\-\\/\\s]?((0?[1-9])|(1[0-9])|(2[0-8]))))))" +
+        "(\\s(((0?[0-9])|([1-2][0-3]))\\:([0-5]?[0-9])((\\s)|(\\:([0-5]?[0-9])))))?$");
+
+    static final Pattern REGEX_IS_MOIBLE = Pattern.compile("^[1][0-9]{10}$");
+
+    static final Pattern REGEX_IS_PHONE_ZONE = Pattern.compile("^[0][1-9]{2,3}-[0-9]{5,10}$");
+
+    static final Pattern REGEX_IS_PHONE = Pattern.compile("^[1-9]{1}[0-9]{5,8}$");
+
+    static final Pattern REGEX_IS_EMAIL = Pattern.compile(
+        "^[\\w!#$%&'*+/=?^_`{|}~-]+(?:\\.[\\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\\w](?:[\\w-]*[\\w])?\\.)+[\\w](?:[\\w-]*[\\w])?");
+
+    static final Pattern REGEX_IS_BANKCARD = Pattern.compile("^[0-9]{0,30}$");
+
+    static final Pattern REGEX_IS_POSTAL = Pattern.compile("^[1-9]\\d{5}$");
+
+    static final Pattern REGEX_IS_MONEY = Pattern.compile(
+        "(^[1-9]([0-9]+)?(\\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\\.[0-9]([0-9])?$)");
+
+    static final Pattern REGEX_IS_ALL_NUMBER = Pattern.compile("^\\d*$");
+
+    static final Pattern REGEX_IS_ALLOWABLE_IP = Pattern.compile(
+        "(127[.]0[.]0[.]1)|" + "(localhost)|" + "(^10(\\.([2][0-4]\\d|[2][5][0-5]|[01]?\\d?\\d)){3}$)|" +
+        "(^172\\.([1][6-9]|[2]\\d|3[01])(\\.([2][0-4]\\d|[2][5][0-5]|[01]?\\d?\\d)){2}$)|" +
+        "(^192\\.168(\\.([2][0-4]\\d|[2][5][0-5]|[01]?\\d?\\d)){2}$)");
+
+    static final Pattern REGEX_RESOURCES_URL = Pattern.compile(".*(\\.jpg|\\.png|\\.gif|\\.js|\\.css).*");
+
+    /**
+     * 获取UUID字符串，移除-
+     */
+    public static String getUUID()
+    {
+        String uuid = UUID.randomUUID().toString().replace("-", "");
+        return uuid;
+    }
+
     /**
      * 特殊字符转义,防止字符串里面的特殊字符被转义.
      */
@@ -236,7 +281,7 @@ public class StringUtils
      * @param str
      * @return
      */
-    public static boolean haseChinese(String str)
+    public static boolean containChinese(String str)
     {
         String regexChinese = "[\u4e00-\u9fa5]";
         Pattern pattern = Pattern.compile(regexChinese);
@@ -244,32 +289,11 @@ public class StringUtils
     }
 
     /**
-     * 判断字符串是否为null，如果为null返回 "" 空字符串，否则返回原字符串
-     *
-     * @param str
-     * @return
+     * 判断字符串是否包含英文
      */
-    public static String isNull(String str)
+    public static boolean containEnglish(String charaString)
     {
-        if (str == null)
-        {
-            return "";
-        }
-        else
-        {
-            return str;
-        }
-    }
-
-    /**
-     * 判断字符串是否为null或者为空。
-     *
-     * @param str
-     * @return
-     */
-    public static boolean isEmpty(String str)
-    {
-        return str == null || str.length() == 0;
+        return charaString.matches("^[a-zA-Z0-9]*");
     }
 
     /**
@@ -344,7 +368,7 @@ public class StringUtils
     }
 
     /**
-     * 切分字符串，最后组成list集合
+     * 字符串转list集合
      *
      * @param str        字符串
      * @param delimiters 分隔符
@@ -359,5 +383,243 @@ public class StringUtils
             list.add(tokenizer.nextToken());
         }
         return list;
+    }
+
+    /**
+     * List 转 String 操作
+     *
+     * @param list
+     * @return a, b, c, d
+     */
+    public static String convertString(List<String> list, String separate)
+    {
+        StringBuffer temp = new StringBuffer();
+        for (int i = 0; i < list.size(); i++)
+        {
+            temp.append(list.get(i));
+            if (i != (list.size() - 1))
+            {
+                temp.append(separate);
+            }
+        }
+        return temp.toString();
+    }
+
+    /**
+     * 判断字符串是否为null或者为空
+     */
+    public static boolean isEmpty(String str)
+    {
+        if (null == str || str.length() == 0)
+            return true;
+        for (int i = 0; i < str.length(); i++)
+        {
+            if (!Character.isWhitespace(str.charAt(i)))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 判定字符串是否是数字
+     */
+    public static boolean isNum(String str)
+    {
+        if (str == null)
+        {
+            return false;
+        }
+        Matcher isNum = REGEX_IS_NUM.matcher(str);
+        if (isNum.matches())
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public static String setValueOrDefaultValue(String s, String defaultvalue)
+    {
+        return s == null ? defaultvalue : s;
+    }
+
+    /**
+     * 判断是否为时间字符串
+     *
+     * @param strDate
+     * @return
+     */
+    public static boolean isDate(String strDate)
+    {
+        Matcher m = REGEX_IS_DATE.matcher(strDate);
+        if (m.matches())
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    /**
+     * 数字转汉语金额
+     */
+    public static String digitUppercase(double n)
+    {
+        String[] fraction = {"角", "分"};
+        String[] digit = {"零", "壹", "贰", "叁", "肆", "伍", "陆", "柒", "捌", "玖"};
+        String[][] unit = {{"元", "万", "亿"}, {"", "拾", "佰", "仟"}};
+        String head = n < 0 ? "负" : "";
+        n = Math.abs(n);
+        String s = "";
+        for (int i = 0; i < fraction.length; i++)
+        {
+            s += (digit[(int)(Math.floor(n * 10 * Math.pow(10, i)) % 10)] + fraction[i]).replaceAll("(零.)+", "");
+        }
+        if (s.length() < 1)
+        {
+            s = "整";
+        }
+        int integerPart = (int)Math.floor(n);
+        for (int i = 0; i < unit[0].length && integerPart > 0; i++)
+        {
+            String p = "";
+            for (int j = 0; j < unit[1].length && n > 0; j++)
+            {
+                p = digit[integerPart % 10] + unit[1][j] + p;
+                integerPart = integerPart / 10;
+            }
+            s = p.replaceAll("(零.)*零$", "").replaceAll("^$", "零") + unit[0][i] + s;
+        }
+        return head + s.replaceAll("(零.)*零元", "元").replaceFirst("(零.)+", "")
+            .replaceAll("(零.)+", "零").replaceAll("^整$", "零元整");
+    }
+
+    /**
+     * 手机号验证,验证通过返回true
+     */
+    public static boolean isMobile(final String str)
+    {
+        Matcher m = REGEX_IS_MOIBLE.matcher(str);
+        return m.matches();
+    }
+
+    /**
+     * 电话号码验证,验证通过返回true
+     */
+    public static boolean isPhone(final String str)
+    {
+        Matcher m;
+        boolean b;
+        int lengthOfContainsZone = 9;
+        if (str.length() > lengthOfContainsZone)
+        {
+            m = REGEX_IS_PHONE_ZONE.matcher(str);
+            b = m.matches();
+        }
+        else
+        {
+            m = REGEX_IS_PHONE.matcher(str);
+            b = m.matches();
+        }
+        return b;
+    }
+
+    /**
+     * 电子邮箱验证,验证通过返回true
+     */
+    public static boolean isEmail(final String str)
+    {
+        Matcher m;
+        boolean b = false;
+        if (str != null)
+        {
+            m = REGEX_IS_EMAIL.matcher(str);
+            b = m.matches();
+        }
+        return b;
+    }
+
+    /**
+     * 银行卡号验证,验证通过返回true
+     */
+    public static boolean isBankCard(final String str)
+    {
+        return REGEX_IS_BANKCARD.matcher(str).matches();
+    }
+
+    /**
+     * 邮政编码验证,验证通过返回true
+     */
+    public static boolean isPostalcode(final String str)
+    {
+        return REGEX_IS_POSTAL.matcher(str).matches();
+    }
+
+    /**
+     * 金额类验证,验证通过返回true
+     */
+    public static boolean isMoney(final String str)
+    {
+        return REGEX_IS_MONEY.matcher(str).matches();
+    }
+
+    public static boolean matchRegex(String val, String regex)
+    {
+        if (isEmpty(val))
+        {
+            return false;
+        }
+        return Pattern.compile(regex).matcher(val).matches();
+    }
+
+    /**
+     * 全角转半角
+     */
+    public static String toDBC(String str)
+    {
+        char[] c = str.toCharArray();
+        for (int i = 0; i < c.length; i++)
+        {
+            if (c[i] == '\u3000')
+            {
+                c[i] = ' ';
+            }
+            else if (c[i] > '\uFF00' && c[i] < '\uFF5F')
+            {
+                c[i] = (char)(c[i] - 65248);
+            }
+        }
+        String returnString = new String(c);
+        return returnString;
+    }
+
+    /**
+     * 验证字符串是否为纯数字,验证通过返回true
+     */
+    public static boolean isAllNum(final String str)
+    {
+        return REGEX_IS_ALL_NUMBER.matcher(str).matches();
+    }
+
+    /**
+     * 判断是否为内网ip
+     */
+    public static boolean isInnerIp(String ip)
+    {
+        return REGEX_IS_ALLOWABLE_IP.matcher(ip).matches();
+    }
+
+    /**
+     * 是否包含无用的URL
+     */
+    public static boolean filterUrl(String url)
+    {
+        return REGEX_RESOURCES_URL.matcher(url).find();
     }
 }

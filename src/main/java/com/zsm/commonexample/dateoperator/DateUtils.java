@@ -7,6 +7,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Pattern;
 
 
 /**
@@ -19,33 +20,35 @@ public class DateUtils
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(DateUtils.class);
 
-    public static final String DATE_LONG = "yyyy-MM-dd HH:mm:ss";      //2018-07-02 20:08:02
-
-    public static final String DATE_SHORT = "yyyy-MM-dd";              //2018-07-02
-
-    public static final String DATE_LONG_EM = "EEE MMM dd HH:mm:ss z yyyy";    //Mon Jul 02 20:08:02 CST 2018
-
-    public static final String DATE_LONG_T = "yyyy-MM-dd'T'HH:mm:ss";    //2019-07-17T10:00:02.657Z
-
-    public static final String DATE_SHORT_EM = "EEE MMM dd yyyy";      //Mon Jul 02 2018
+    public static Pattern REGEX_IS_DATE = Pattern.compile("\\d{4}-\\d{2}|\\d{4}-\\d{2}-\\d{2}");
 
     //      示例：2019-07-17T10:00:02.657Z
-    public static final SimpleDateFormat SIMPLE_DATE_FORMAT_T = new SimpleDateFormat(DATE_LONG_T);
+    public static final SimpleDateFormat SIMPLE_DATE_FORMAT_T = new SimpleDateFormat(
+        DateFormatEnum.DATA_LONG_T.pattern);
 
     //      示例：Wed Jul 17 10:00:02 CST 2019
-    public static final SimpleDateFormat SIMPLE_DATE_FORMAT_EZ = new SimpleDateFormat(DATE_LONG_EM, Locale.UK);
+    public static final SimpleDateFormat SIMPLE_DATE_FORMAT_EZ = new SimpleDateFormat(
+        DateFormatEnum.DATE_LONG_EM.pattern, Locale.UK);
 
     //      示例：2019-07-17 10:00:02
-    public static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat(DATE_LONG);
+    public static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat(DateFormatEnum.DATE_LONG.pattern);
 
     public static final long PERIOD_DAY = 24 * 60 * 60 * 1000;
 
     public static final String GMT_8 = "GMT+8";
 
     /**
+     * 判断字符串是否为yyyy-MM或者yyyy-MM-dd
+     */
+    public static boolean checkDateStr(String dateStr)
+    {
+        return REGEX_IS_DATE.matcher(dateStr).matches();
+    }
+
+    /**
      * 初始化时间格式化对象 SimpleDateFormat
      */
-    private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_LONG);
+    private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DateFormatEnum.DATE_LONG.pattern);
 
     /**
      * 获取当前时间的长日期格式字符串  yyyy-MM-dd HH:mm:ss
@@ -54,7 +57,7 @@ public class DateUtils
      */
     public static String getNowDateLongString()
     {
-        return new SimpleDateFormat(DateUtils.DATE_LONG).format(new Date());
+        return new SimpleDateFormat(DateFormatEnum.DAY.pattern).format(new Date());
     }
 
     /**
@@ -65,7 +68,7 @@ public class DateUtils
      */
     public static String getDateLongString(Date date)
     {
-        return new SimpleDateFormat(DateUtils.DATE_LONG).format(date);
+        return new SimpleDateFormat(DateFormatEnum.DAY.pattern).format(date);
     }
 
     /**
@@ -75,7 +78,7 @@ public class DateUtils
      */
     public static String getDateShortString()
     {
-        return new SimpleDateFormat(DateUtils.DATE_SHORT).format(new Date());
+        return new SimpleDateFormat(DateFormatEnum.DAY.pattern).format(new Date());
     }
 
     /**
@@ -86,7 +89,16 @@ public class DateUtils
      */
     public static String getDateShortString(Date date)
     {
-        return new SimpleDateFormat(DateUtils.DATE_SHORT).format(date);
+        return new SimpleDateFormat(DateFormatEnum.DAY.pattern).format(date);
+    }
+
+    /**
+     * 日期时间转时间戳
+     */
+    public static long dateToTimeStamp(String date, DateFormatEnum dateFormat)
+        throws ParseException
+    {
+        return new SimpleDateFormat(dateFormat.getFormat()).parse(date).getTime();
     }
 
     /**
@@ -117,7 +129,7 @@ public class DateUtils
      * @param date 默认格式：yyyy-MM-dd HH:mm:ss
      * @return
      */
-    public static String formatString(Date date)
+    public static String formatDate(Date date)
     {
         /**
          * "2018-7-1 18:10:30" 输出结果：
@@ -136,12 +148,21 @@ public class DateUtils
      * 根据时间样式格式化时间
      *
      * @param date
-     * @param type yyyy-MM-dd HH:mm:ss
+     * @param format yyyy-MM-dd HH:mm:ss
      * @return
      */
-    public static String formatString(Date date, String type)
+    public static String formatDate(Date date, String format)
     {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(type);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
+        return simpleDateFormat.format(date);
+    }
+
+    /**
+     * 根据时间样式格式化时间
+     */
+    public static String formatDate(Date date, DateFormatEnum format)
+    {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format.getFormat());
         return simpleDateFormat.format(date);
     }
 
@@ -175,14 +196,14 @@ public class DateUtils
      * 字符串根据样式转换为时间
      *
      * @param source
-     * @param type   格式：yyyy-MM-dd HH:mm:ss
+     * @param format 格式：yyyy-MM-dd HH:mm:ss
      * @return
      * @throws ParseException
      */
-    public static Date toDate(String source, String type)
+    public static Date toDate(String source, String format)
         throws ParseException
     {
-        return new SimpleDateFormat(type).parse(source);
+        return new SimpleDateFormat(format).parse(source);
     }
 
     /**
@@ -392,7 +413,7 @@ public class DateUtils
     public static String dateTransformationShort(String date)
         throws ParseException
     {
-        return transformation(date, DATE_SHORT_EM, DATE_SHORT, Locale.US, GMT_8);
+        return transformation(date, DateFormatEnum.DATA_SHORT_EM.pattern, DateFormatEnum.DAY.pattern, Locale.US, GMT_8);
     }
 
     /**
@@ -405,7 +426,8 @@ public class DateUtils
     public static String dateTransformationLong(String date)
         throws ParseException
     {
-        return transformation(date, DATE_LONG_EM, DATE_LONG, Locale.US, GMT_8);
+        return transformation(date, DateFormatEnum.DATE_LONG_EM.pattern, DateFormatEnum.DATE_LONG.pattern,
+            Locale.US, GMT_8);
     }
 
     /**
@@ -473,33 +495,203 @@ public class DateUtils
         return null;
     }
 
-    public enum CharSet
+    /**
+     * 获取当前时间前后几分钟的时间戳
+     */
+    public static Long getTimeByMinute(double minute)
     {
-        DATE_LONG(1, "yyyy-MM-dd HH:mm:ss"),
-        DATA_SHORT(2, "yyyy-MM-dd"),
-        DATA_LONG_EM(3, "EEE MMM dd HH:mm:ss z yyyy"),
-        DATA_SHORT_EM(4, "EEE MMM dd yyyyd"),
-        DATA_LONG_SLASH(5, "yyyy/MM/dd HH:mm:ss"),
-        DATA_SHORT_SLASH(6, "yyyy/MM/dd"),
-        DATA_LONG_T(6, "yyyy-MM-dd'T'HH:mm:ss");
+        Calendar calendar = Calendar.getInstance();
+        int second = (int)(minute * 60);
+        calendar.add(Calendar.SECOND, second);
+        return calendar.getTimeInMillis();
+    }
+
+    /**
+     * 计算是否是季度末
+     *
+     * @param date eg:2020-03-01
+     * @return true/false
+     */
+    public static boolean isSeasonEnd(String date)
+    {
+        int month = Integer.parseInt(date.substring(5, 7));
+        List seasonEnds = Arrays.asList(3, 6, 9, 12);
+        return seasonEnds.contains(month);
+    }
+
+    /**
+     * 获取时间间隔N天的时间
+     */
+    public static String getDayFromNow(int day, DateFormatEnum format)
+    {
+        GregorianCalendar calendar = new GregorianCalendar();
+        SimpleDateFormat df = new SimpleDateFormat(format.getFormat());
+        calendar.add(Calendar.DAY_OF_YEAR, day);
+        Date date = calendar.getTime();
+        return df.format(date);
+    }
+
+    /**
+     * 判断两个时间的间隔天数
+     */
+    public static int differentDays(String start, String end, DateFormatEnum dateFormat)
+        throws ParseException
+    {
+        SimpleDateFormat df = new SimpleDateFormat(dateFormat.getFormat());
+        Date startDate = df.parse(start);
+        Date endDate = df.parse(end);
+        long a = endDate.getTime() - startDate.getTime();
+        long b = a / (24 * 60 * 60 * 1000);
+        return (int)b;
+    }
+
+    /**
+     * 根据现在的年月获取去年的年份
+     */
+    public static String strToLastYear(String val)
+        throws ParseException
+    {
+        Date date = toDate(val, DateFormatEnum.MONTH.pattern);
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        c.add(Calendar.YEAR, -1);
+        Date yearDate = c.getTime();
+        String year = formatDate(yearDate, DateFormatEnum.MONTH);
+        return year;
+    }
+
+    /**
+     * 根据出生日期获取当前的年龄
+     *
+     * @param birthDay
+     * @return
+     */
+    public static int getAge(Date birthDay)
+    {
+        Calendar cal = Calendar.getInstance();
+        if (birthDay == null || cal.before(birthDay))
+        {
+            return 0;
+        }
+        int yearNow = cal.get(Calendar.YEAR);
+        int monthNow = cal.get(Calendar.MONTH) + 1;
+        int dayOfMonthNow = cal.get(Calendar.DAY_OF_MONTH);
+        cal.setTime(birthDay);
+
+        int yearBirth = cal.get(Calendar.YEAR);
+        int monthBirth = cal.get(Calendar.MONTH);
+        int dayOfMonthBirth = cal.get(Calendar.DAY_OF_MONTH);
+        int age = yearNow - yearBirth;
+        if (monthNow < monthBirth || (monthNow == monthBirth && dayOfMonthNow < dayOfMonthBirth))
+        {
+            age--;
+        }
+        return age;
+    }
+
+    /**
+     * 获取某月所有日期（形如:"2020-04-01"）
+     */
+    public static List<String> getDayOfMonth(int year, int month, DateFormatEnum format)
+    {
+        DateFormat df = new SimpleDateFormat(format.pattern);
+        List<String> dates = new ArrayList<>();
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, year);
+        cal.set(Calendar.MONTH, month - 1);
+        cal.set(Calendar.DATE, 1);
+        while (cal.get(Calendar.YEAR) == year && cal.get(Calendar.MONTH) < month)
+        {
+            dates.add(df.format(cal.getTime().clone()));
+            cal.add(Calendar.DATE, 1);
+        }
+        return dates;
+    }
+
+    /**
+     * 获取某月天数
+     */
+    public static int getDaysOfMonth(Date date)
+    {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        return calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+    }
+
+    /**
+     * 获取周对应数字,默认返回 周日(0)
+     */
+    public static int getWeekNum(String week)
+    {
+        return WeekEnum.getWeekEn(week);
+    }
+
+    public enum DateFormatEnum
+    {
+        /**
+         * 年
+         */
+        YEAR(1, "yyyy"),
+        /**
+         * 年-月
+         */
+        MONTH(2, "yyyy-MM"),
+        /**
+         * 年月
+         */
+        MONTHNEW(3, "yyyyMM"),
+        /**
+         * 年-月-日
+         */
+        DAY(4, "yyyy-MM-dd"),
+        /**
+         * 年月日
+         */
+        DAYNEW(5, "yyyyMMdd"),
+        /**
+         * ""年""月""日
+         */
+        DAYOLD(6, "yyyy年MM月dd日"),
+        /**
+         * 年-月-日 时
+         */
+        HOUR(7, "yyyy-MM-dd HH"),
+        /**
+         * 年-月-日 时:分
+         */
+        MINUTES(8, "yyyy-MM-dd HH:mm"),
+        /**
+         * 年-月-日  时:分:秒
+         */
+        DATE_LONG(9, "yyyy-MM-dd HH:mm:ss"),
+        /**
+         * 时:分:秒
+         */
+        TIME(10, "HH:mm:ss"),
+        DATE_LONG_EM(11, "EEE MMM dd HH:mm:ss z yyyy"), //Mon Jul 02 20:08:02 CST 2018
+        DATA_SHORT_EM(12, "EEE MMM dd yyyy"),  //Mon Jul 02 2018
+        DATA_LONG_SLASH(13, "yyyy/MM/dd HH:mm:ss"),
+        DATA_SHORT_SLASH(14, "yyyy/MM/dd"),
+        DATA_LONG_T(15, "yyyy-MM-dd'T'HH:mm:ss"),   //2019-07-17T10:00:02.657Z
+        DATAEW(16, "yyyyMMddHHmmss");
 
         private int index;
 
         private String pattern;
 
-        private CharSet(int index, String pattern)
+        DateFormatEnum(int index, String pattern)
         {
             this.index = index;
             this.pattern = pattern;
         }
 
-        public static String getPattern(int index)
+        public static String getFormat(int index)
         {
-            for (CharSet cs : CharSet.values())
+            for (DateFormatEnum df : DateFormatEnum.values())
             {
-                if (cs.getIndex() == index)
+                if (df.getIndex() == index)
                 {
-                    return cs.getPattern();
+                    return df.getFormat();
                 }
             }
             return null;
@@ -515,7 +707,7 @@ public class DateUtils
             this.index = index;
         }
 
-        public String getPattern()
+        public String getFormat()
         {
             return pattern;
         }
@@ -523,6 +715,98 @@ public class DateUtils
         public void setPattern(String pattern)
         {
             this.pattern = pattern;
+        }
+    }
+
+
+    // 周
+    public enum WeekEnum
+    {
+        Mon(1, "Mon", "星期一"),
+        Tue(2, "Tue", "星期二"),
+        Wed(3, "Wed", "星期三"),
+        Thu(4, "Thu", "星期四"),
+        Fri(5, "Fri", "星期五"),
+        Sat(6, "Sat", "星期六"),
+        Sun(0, "Sun", "星期日");
+
+        private int val;
+
+        private String chName;
+
+        private String enName;
+
+        public static String getWeek(int val)
+        {
+            for (WeekEnum wk : WeekEnum.values())
+            {
+                if (wk.getVal() == val)
+                {
+                    return wk.enName;
+                }
+            }
+            return "";
+        }
+
+        public static int getWeekEn(String enName)
+        {
+            for (WeekEnum wk : WeekEnum.values())
+            {
+                if (wk.enName == enName)
+                {
+                    return wk.val;
+                }
+            }
+            return 0;
+        }
+
+        public static int getWeekCh(String chName)
+        {
+            for (WeekEnum wk : WeekEnum.values())
+            {
+                if (wk.chName == chName)
+                {
+                    return wk.val;
+                }
+            }
+            return 0;
+        }
+
+        WeekEnum(int index, String enName, String chName)
+        {
+            this.val = index;
+            this.enName = enName;
+            this.chName = chName;
+        }
+
+        public int getVal()
+        {
+            return val;
+        }
+
+        public void setVal(int val)
+        {
+            this.val = val;
+        }
+
+        public String getChName()
+        {
+            return chName;
+        }
+
+        public void setChName(String chName)
+        {
+            this.chName = chName;
+        }
+
+        public String getEnName()
+        {
+            return enName;
+        }
+
+        public void setEnName(String enName)
+        {
+            this.enName = enName;
         }
     }
 }

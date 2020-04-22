@@ -5,6 +5,7 @@ import org.apache.commons.lang.StringUtils;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -40,6 +41,16 @@ public class NumberUtils
      * 匹配字符串只包含数字和大小写字母
      */
     private static String REGEX = "^[0-9a-zA-Z]+$";
+
+    /**
+     * 将小数转换成百分数
+     */
+    public static String decimalToPercentage(double input)
+    {
+        NumberFormat percent = NumberFormat.getPercentInstance();
+        percent.setMaximumFractionDigits(2);
+        return percent.format(input);
+    }
 
     /**
      * 十进制转换成十六进制,十进制转换为二进制,十进制转换为八进制
