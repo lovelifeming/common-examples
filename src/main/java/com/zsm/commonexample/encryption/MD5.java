@@ -66,7 +66,7 @@ public class MD5
             byte[] bytes = md.digest(sourceString.getBytes("UTF-8"));
             // 把密文转换成十六进制的字符串形式
             String hexString = NumberUtils.byteArrayToHexString(bytes);
-            return hexString.toUpperCase();
+            return hexString;
         }
         return null;
     }
@@ -77,8 +77,21 @@ public class MD5
      * @param source 加密源字符串
      * @return 加密密钥
      */
-    public static String encodeBySpringFramework(String source)
+    public static String encodeBySpringFrameworkAsHex(String source)
     {
         return DigestUtils.md5DigestAsHex(source.getBytes());
+    }
+
+    /**
+     * 使用spring框架自带MD5加密方法
+     *
+     * @param source 加密源字符串
+     * @return 加密密钥
+     */
+    public static String encodeBySpringFramework(String source)
+    {
+        byte[] bytes = DigestUtils.md5Digest(source.getBytes());
+        String hexString = NumberUtils.byteArrayToHexString(bytes);
+        return hexString;
     }
 }

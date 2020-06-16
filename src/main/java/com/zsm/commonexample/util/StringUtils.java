@@ -96,7 +96,19 @@ public class StringUtils
     }
 
     /**
-     * 数字格式化
+     * 数字格式化:
+     * 显示正负数的符号：+12与-12
+     * 左对齐：12
+     * 右对齐：   12
+     * 补全编号是：001
+     * 空格补全：   1
+     * 价格是： 3.14159元
+     * 整数分组是：31,415.926500
+     * 括号包括：(12.131400)
+     * 十六进制：0x14  八进制：024
+     * 格式化前一个转换符：3.141593,转换后：3.14
+     * 格式参数$的使用：12,abc
+     * 浮点数格式：2.718285
      */
     public static void demonstrationConvert()
     {
@@ -121,7 +133,12 @@ public class StringUtils
         //< 格式化前一个转换符所描述的参数
         System.out.printf("格式化前一个转换符：%f,转换后：%<3.2f %n", 3.14159265);
         //$使用 格式化参数的索引
-        System.out.printf("格式参数$的使用：%1$d,%2$s", 12, "abc");
+        System.out.printf("格式参数$的使用：%1$d,%2$s %n", 12, "abc");
+        //自定义浮点数精度
+        Double val = 2.7182845965;
+        int precision = 6;
+        String format = "%." + precision + "f";
+        System.out.println("浮点数格式：" + String.format(format, val, precision));
     }
 
     /**
