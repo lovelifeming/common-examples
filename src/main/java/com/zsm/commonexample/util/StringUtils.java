@@ -48,6 +48,10 @@ public class StringUtils
 
     static final Pattern REGEX_RESOURCES_URL = Pattern.compile(".*(\\.jpg|\\.png|\\.gif|\\.js|\\.css).*");
 
+    private static Pattern PATTERN_INT = Pattern.compile("^[-\\+]?[\\d]*$");    //正则匹配判断整数
+
+    private static Pattern PATTERN_DOUBLE = Pattern.compile("^[-\\+]?\\d*[.]\\d+$");    //正则匹配判断浮点数
+
     /**
      * 获取UUID字符串，移除-
      */
@@ -440,9 +444,9 @@ public class StringUtils
     }
 
     /**
-     * 判定字符串是否是数字
+     * 判定字符串是否全部是数字
      */
-    public static boolean isNum(String str)
+    public static boolean isNumber(String str)
     {
         if (str == null)
         {
@@ -457,6 +461,18 @@ public class StringUtils
         {
             return false;
         }
+    }
+
+    /**
+     * 判定字符串是否是整数或小数
+     */
+    public static boolean isNumeric(String str)
+    {
+        if (null == str || "".equals(str))
+        {
+            return false;
+        }
+        return PATTERN_INT.matcher(str).matches() || PATTERN_DOUBLE.matcher(str).matches();
     }
 
     public static String setValueOrDefaultValue(String s, String defaultvalue)
