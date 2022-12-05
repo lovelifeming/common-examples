@@ -305,7 +305,7 @@
                     <archive>
                         <manifest>
                             <!-- main函数类名-->
-                            <mainClass>com.zsm.commonexample.main.Main</mainClass>
+                            <mainClass>com.zsm.commonexample.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

@@ -1,4 +1,4 @@
-package com.zsm.commonexample.main;
+package com.zsm.commonexample;
 
 import java.text.SimpleDateFormat;
 

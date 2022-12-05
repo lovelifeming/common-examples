@@ -1,6 +1,6 @@
 package com.zsm.commonexample.fileoperator;
 
-import com.zsm.commonexample.main.Main;
+import com.zsm.commonexample.Main;
 import org.apache.commons.collections.map.HashedMap;
 import org.jdom.Attribute;
 import org.jdom.Document;
