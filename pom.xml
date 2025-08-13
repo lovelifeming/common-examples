@@ -237,6 +237,16 @@
             <artifactId>bcprov-ext-jdk16</artifactId>
             <version>1.45</version>
         </dependency>
+      <dependency>
+        <groupId>com.github.jsqlparser</groupId>
+        <artifactId>jsqlparser</artifactId>
+        <version>4.9</version>
+      </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.11.0</version>
+        </dependency>
 
     </dependencies>
 
