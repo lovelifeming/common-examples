@@ -22,30 +22,29 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-
 public class ConvertMySQLToPG
 {
   //region 建表语句参数配置
   private static Charset CHARSET = StandardCharsets.UTF_8;    // 编码格式
-  private static boolean IF_EXISTS= false;             // 创建表时，是否添加IF EXISTS
+  private static boolean IF_EXISTS= false;                // 创建表时，是否添加IF EXISTS
 
-  private static boolean UPPER_CASE= false;    // 是否将字段名大写
-  private static boolean RETAIN_QUOTE = false;    // 是否 保留反单引号
-  private static boolean RETAIN_CHARACTER_SET = false;   // 是否保留 CHARACTER SET utf8mb4
-  private static boolean RETAIN_COLLATE = false;         // 是否 保留 COLLATE utf8mb4_bin
-  private static boolean RETAIN_INDEX = false;          // 是否保留 INDEX
-  private static boolean RETAIN_KEY = true;          // 是否保留 KEY
-  private static boolean RETAIN_TABLE_OPTIONS = false;   // 是否保留表配置项
+  private static boolean UPPER_CASE= false;               // 是否将字段名大写
+  private static boolean RETAIN_QUOTE = false;            // 是否 保留反单引号
+  private static boolean RETAIN_CHARACTER_SET = false;    // 是否保留 CHARACTER SET utf8mb4
+  private static boolean RETAIN_COLLATE = false;          // 是否 保留 COLLATE utf8mb4_bin
+  private static boolean RETAIN_INDEX = false;            // 是否保留 INDEX
+  private static boolean RETAIN_PRIMARY_KEY = true;       // 是否保留 KEY
+  private static boolean RETAIN_TABLE_OPTIONS = false;    // 是否保留表配置项
 
-  private static boolean ADD_TABLE_COMMENTS= true;   // 是否添加表注释
-  private static boolean ADD_COLUMN_COMMENTS= true;  // 是否添加表字段注释
-  private static boolean ADD_DROP_TABLE_SQL= true;    // 是否添加 drop table 语句
+  private static boolean ADD_TABLE_COMMENTS= true;        // 是否添加表注释
+  private static boolean ADD_COLUMN_COMMENTS= true;       // 是否添加表字段注释
+  private static boolean ADD_DROP_TABLE_SQL= true;        // 是否添加 drop table 语句
 
-  private static String REGEX_PARTITION_BY ="(?s)PARTITION\\s+BY\\s+[^)]*\\)[^;]*;";  //  分区语句
+  private static String REGEX_PARTITION_BY ="(?s)PARTITION\\s+BY\\s+[^)]*\\)[^;]*;";      // 分区语句
   //endregion
 
   /**
-   * @Description: 将MySQL导出的表结构转换成 PostgreSQL
+   * @Description: 将MySQL导出的DDL语句转换成 PostgreSQL语句
    */
   public static void main(String[] args)
       throws IOException, JSQLParserException
@@ -71,9 +70,6 @@ public class ConvertMySQLToPG
         Table table = ct.getTable();
         List<ColumnDefinition> columnDefinitions = ct.getColumnDefinitions();
         List<String> comments = new ArrayList<>();
-        List<ColumnDefinition> collect = columnDefinitions.stream().peek(columnDefinition -> {
-          handleColumn(table, comments, columnDefinition);
-        }).collect(Collectors.toList());
         if(ADD_TABLE_COMMENTS){
           List<String> tableOptionsStrings = ct.getTableOptionsStrings();
           if(tableOptionsStrings==null)
@@ -85,6 +81,10 @@ public class ConvertMySQLToPG
             comments.add(commentSql);
           }
         }
+        List<ColumnDefinition> collect = columnDefinitions.stream().peek(columnDefinition -> {
+          handleColumn(table, comments, columnDefinition);
+        }).collect(Collectors.toList());
+
         if(!RETAIN_TABLE_OPTIONS){
           ct.setTableOptionsStrings(null);
         }
@@ -92,10 +92,10 @@ public class ConvertMySQLToPG
         if(ct.getIndexes() != null && ct.getIndexes().size() > 0){
           Stream<Index> indexStream = ct.getIndexes().stream().peek(n -> n.setIndexSpec(null));
           if(!RETAIN_INDEX){
-            indexStream = indexStream.filter(n -> !"INDEX".equals(n.getType()));
+            indexStream = indexStream.filter(n -> !"INDEX".equals(n.getType()) && !"KEY".equals(n.getType()));
           }
-          if(!RETAIN_KEY){
-            indexStream = indexStream.filter(n -> !"KEY".equals(n.getType()));
+          if(!RETAIN_PRIMARY_KEY){
+            indexStream = indexStream.filter(n -> !"PRIMARY KEY".equals(n.getType()));
           }
           ct.setIndexes(indexStream.collect(Collectors.toList()));
         }
@@ -115,7 +115,7 @@ public class ConvertMySQLToPG
         createSQL = RETAIN_QUOTE ? createSQL :createSQL.replaceAll("`", "");
         createSQL = !IF_EXISTS ? createSQL : createSQL.replaceAll("IF NOT EXISTS", "");
 
-        FileUtils.write(file,createSQL + ";", CHARSET,true);
+        FileUtils.write(file,createSQL + ";\n", CHARSET,true);
         if(ADD_COLUMN_COMMENTS){
           FileUtils.writeLines(file,comments,true);
           FileUtils.write(file,"\n",true);
@@ -135,7 +135,7 @@ public class ConvertMySQLToPG
       {
         FileUtils.write(file, statement + ";\n", CHARSET, true);
       }
-      else if (!RETAIN_KEY && statement instanceof Alter)
+      else if (!RETAIN_PRIMARY_KEY && statement instanceof Alter)
       {
         FileUtils.write(file, statement + ";\n", CHARSET, true);
       }
