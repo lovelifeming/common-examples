@@ -99,6 +99,7 @@ public class ConvertMySQLToPG
           }
           ct.setIndexes(indexStream.collect(Collectors.toList()));
         }
+        ct.setIfNotExists(IF_EXISTS);
 
         String createSQL = ct.toString()
             .replaceAll("BIGINT UNIQUE NOT NULL AUTO_INCREMENT", "BIGSERIAL PRIMARY KEY")
@@ -106,14 +107,9 @@ public class ConvertMySQLToPG
             .replaceAll("BIGINT NOT NULL AUTO_INCREMENT", "BIGSERIAL PRIMARY KEY")
             .replaceAll("INT NOT NULL AUTO_INCREMENT", "BIGSERIAL PRIMARY KEY")
             .replaceAll("INT NULL AUTO_INCREMENT", "BIGSERIAL PRIMARY KEY")
-            .replaceAll("tinyint", "smallint")
-            .replaceAll("mediumtext","text")
-            .replaceAll("longtext","text")
-            .replaceAll("datetime", "timestamp")
-            .replaceAll(",(?![^(]*\\))", ",\n")
             .replaceAll(", PRIMARY KEY \\(\"id\"\\)", "");
+        createSQL = convertType(createSQL);
         createSQL = RETAIN_QUOTE ? createSQL :createSQL.replaceAll("`", "");
-        createSQL = !IF_EXISTS ? createSQL : createSQL.replaceAll("IF NOT EXISTS", "");
 
         FileUtils.write(file,createSQL + ";\n", CHARSET,true);
         if(ADD_COLUMN_COMMENTS){
@@ -127,7 +123,8 @@ public class ConvertMySQLToPG
         if (drop.getType().equals("TABLE") && ADD_DROP_TABLE_SQL)
         {
           drop.setIfExists(IF_EXISTS);
-          String dropSql = RETAIN_QUOTE ? drop.toString():drop.toString().replaceAll("`", "");
+          String dropSql = RETAIN_QUOTE ? drop.toString():drop.toString().replaceAll("`", "")
+              .replaceAll("\"", "");
           FileUtils.write(file, dropSql+ ";\n", CHARSET, true);
         }
       }
@@ -137,7 +134,19 @@ public class ConvertMySQLToPG
       }
       else if (!RETAIN_PRIMARY_KEY && statement instanceof Alter)
       {
-        FileUtils.write(file, statement + ";\n", CHARSET, true);
+        String alterStr = convertType(statement.toString());
+        boolean flag = alterStr.contains("comment");
+        if(flag||alterStr.contains("COMMENT")){
+          String[] splits = flag ? alterStr.split("comment") : alterStr.split("COMMENT");
+          FileUtils.write(file, splits[0] + ";\n", CHARSET, true);
+          String colName = ((Alter)statement).getAlterExpressions().get(0).getColDataTypeList().get(0).getColumnName();
+          String dbTableName = ((Alter)statement).getTable().toString();
+          String comment = String.join(" ", "COMMENT ON COLUMN",
+              String.join(".", dbTableName, colName), "IS", splits[1]);
+          FileUtils.write(file, comment + ";\n", CHARSET, true);
+        }else {
+          FileUtils.write(file, alterStr + ";\n", CHARSET, true);
+        }
       }
       else
       {
@@ -145,6 +154,17 @@ public class ConvertMySQLToPG
         System.out.println(statement.toString());
       }
     }
+  }
+
+  private static String convertType(String sql)
+  {
+    sql = sql.replaceAll(" tinyint", "smallint")
+        .replaceAll(" mediumtext","text")
+        .replaceAll(" longtext","text")
+        .replaceAll(" datetime", "timestamp")
+        .replaceAll("\"", "")
+        .replaceAll(",(?![^(]*\\))", ",\n");
+    return sql;
   }
 
   /**
